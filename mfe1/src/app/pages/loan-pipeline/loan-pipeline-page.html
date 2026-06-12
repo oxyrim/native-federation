@@ -1,0 +1,337 @@
+<div class="pipeline-layout">
+  <!-- ============================ MAIN COLUMN ============================ -->
+  <div class="main-col">
+    <div class="page-header">
+      <h1 class="up-page-title">Loan Pipeline</h1>
+      <p class="up-page-subtitle">View, manage and refresh pricing for your loan inventory.</p>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="kpi-row">
+      <div class="up-card kpi">
+        <div class="kpi-head">
+          <span class="kpi-icon neutral"><i class="pi pi-file"></i></span>
+          <span class="kpi-label">Total Loans</span>
+        </div>
+        <div class="kpi-value">{{ loansService.totalLoans() | number }}</div>
+        <div class="kpi-sub">Total UPB <strong>{{ millions(loansService.totalUpb()) }}</strong></div>
+      </div>
+
+      <div class="up-card kpi">
+        <div class="kpi-head">
+          <span class="kpi-icon ready"><i class="pi pi-check-circle"></i></span>
+          <span class="kpi-label">Ready for Pricing</span>
+        </div>
+        <div class="kpi-value">{{ loansService.ready().length | number }}</div>
+        <div class="kpi-sub">Total UPB <strong>{{ millions(loansService.readyUpb()) }}</strong></div>
+      </div>
+
+      <div class="up-card kpi">
+        <div class="kpi-head">
+          <span class="kpi-icon warn"><i class="pi pi-exclamation-triangle"></i></span>
+          <span class="kpi-label">Missing Data</span>
+        </div>
+        <div class="kpi-value">{{ loansService.missing().length | number }}</div>
+        <div class="kpi-sub">Total UPB <strong>{{ millions(loansService.missingUpb()) }}</strong></div>
+      </div>
+    </div>
+
+    <!-- Search / filter toolbar -->
+    <div class="up-card toolbar">
+      <div class="toolbar-row">
+        <p-iconfield class="search-field">
+          <p-inputicon class="pi pi-search" />
+          <input
+            pInputText
+            type="text"
+            placeholder="Search loans by Case File ID or Seller Loan ID"
+            [ngModel]="search()"
+            (ngModelChange)="search.set($event)"
+          />
+        </p-iconfield>
+
+        <div class="identifier-group">
+          <div class="radio-row">
+            <span class="radio-opt">
+              <p-radiobutton
+                inputId="idCase"
+                name="identifierKind"
+                value="case"
+                [ngModel]="identifierKind()"
+                (ngModelChange)="identifierKind.set($event)"
+              />
+              <label for="idCase">Case File Identifier</label>
+            </span>
+            <span class="radio-opt">
+              <p-radiobutton
+                inputId="idSeller"
+                name="identifierKind"
+                value="seller"
+                [ngModel]="identifierKind()"
+                (ngModelChange)="identifierKind.set($event)"
+              />
+              <label for="idSeller">Seller Loan Identifier</label>
+            </span>
+          </div>
+          <input
+            pInputText
+            class="identifier-input"
+            type="text"
+            placeholder="Enter full or partial identifier"
+            [ngModel]="search()"
+            (ngModelChange)="search.set($event)"
+          />
+        </div>
+
+        <div class="toolbar-actions">
+          <p-select
+            [options]="dateOptions"
+            optionLabel="label"
+            optionValue="value"
+            [ngModel]="dateRange()"
+            (ngModelChange)="dateRange.set($event)"
+            size="small"
+          >
+            <ng-template #dropdownicon><i class="pi pi-angle-down"></i></ng-template>
+          </p-select>
+          <p-button
+            label="Filters"
+            icon="pi pi-filter"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+            (onClick)="showFilters.set(!showFilters())"
+          />
+          <p-button label="Customize Columns" severity="secondary" [outlined]="true" size="small" />
+          <button class="gear-btn" type="button" aria-label="Table settings">
+            <i class="pi pi-cog"></i>
+          </button>
+        </div>
+      </div>
+
+      @if (showFilters()) {
+        <div class="toolbar-row filters-row">
+          <span class="up-section-label">Status</span>
+          <p-multiselect
+            [options]="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="All statuses"
+            display="chip"
+            [ngModel]="statusFilter()"
+            (ngModelChange)="statusFilter.set($event)"
+            size="small"
+          />
+        </div>
+      }
+    </div>
+
+    <!-- Selection summary -->
+    <div class="selection-bar">
+      <i class="pi pi-stop selection-check"></i>
+      <span>
+        <strong>{{ selectedRows.length }}</strong> of {{ pageSize }} loans selected
+      </span>
+      <a class="clear-link" (click)="clearSelection()">Clear Selection</a>
+    </div>
+
+    <!-- Loans table -->
+    <div class="up-card table-card">
+      <p-table
+        [value]="filtered()"
+        dataKey="sellerLoanId"
+        [paginator]="true"
+        [rows]="pageSize"
+        [selection]="selectedRows"
+        (selectionChange)="onSelectionChange($any($event))"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} loans"
+        styleClass="p-datatable-sm loans-table"
+        [scrollable]="true"
+      >
+        <ng-template #header>
+          <tr>
+            <th style="width: 3rem"><p-tableHeaderCheckbox /></th>
+            <th>Seller Loan ID</th>
+            <th>Source</th>
+            <th>Case File ID</th>
+            <th>Product Name</th>
+            <th>
+              Servicing <i class="pi pi-info-circle th-info" pTooltip="Servicing strategy for the loan"></i>
+              <div class="th-hint">(Default: Retained)</div>
+            </th>
+            <th class="num">
+              Base Price <i class="pi pi-info-circle th-info" pTooltip="Price before adjustments"></i>
+            </th>
+            <th class="num">
+              SRP <i class="pi pi-info-circle th-info" pTooltip="Servicing released premium"></i>
+              <div class="th-hint">(N/A = Retained)</div>
+            </th>
+            <th class="num">
+              LLPAs <i class="pi pi-info-circle th-info" pTooltip="Loan-level price adjustments"></i>
+            </th>
+            <th class="num">
+              All-in Price <i class="pi pi-info-circle th-info" pTooltip="Base + SRP + LLPAs"></i>
+            </th>
+            <th class="num">UPB</th>
+            <th>Last Updated</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template #body let-loan>
+          <tr>
+            <td><p-tableCheckbox [value]="loan" /></td>
+            <td class="cell-id">{{ loan.sellerLoanId }}</td>
+            <td>
+              <span class="up-source-badge" [class.du]="loan.source === 'DU'" [class.imported]="loan.source === 'Imported'">
+                {{ loan.source === 'DU' ? 'DU' : 'Imported' }}
+              </span>
+            </td>
+            <td class="cell-id">{{ loan.caseFileId ?? 'N/A' }}</td>
+            <td>{{ loan.productName }}</td>
+            <td>
+              <p-select
+                class="servicing-select"
+                [options]="servicingOptions"
+                optionLabel="label"
+                optionValue="value"
+                [ngModel]="loan.servicing"
+                size="small"
+              />
+            </td>
+            <td class="num">{{ loan.basePrice !== null ? (loan.basePrice | number: '1.3-3') : '—' }}</td>
+            <td class="num">{{ loan.srp !== null ? (loan.srp | number: '1.3-3') : 'N/A' }}</td>
+            <td class="num" [class.negative]="loan.llpa !== null && loan.llpa < 0">{{ llpaLabel(loan.llpa) }}</td>
+            <td class="num strong">{{ loan.allInPrice !== null ? (loan.allInPrice | number: '1.3-3') : '—' }}</td>
+            <td class="num strong">{{ loan.upb | currency: 'USD' : 'symbol' : '1.0-0' }}</td>
+            <td class="cell-muted">{{ loan.lastUpdated }}</td>
+            <td>
+              <span
+                class="up-chip"
+                [class.ready]="loan.status === 'Ready for Pricing'"
+                [class.warn]="loan.status === 'Missing Data'"
+                [class.neutral]="loan.status === 'Ineligible'"
+              >
+                {{ loan.status }}
+              </span>
+            </td>
+            <td class="cell-actions">
+              <a class="view-link" [routerLink]="['loans', loan.sellerLoanId]">View</a>
+              <p-menu #rowMenu [model]="rowMenuItems(loan)" [popup]="true" appendTo="body" />
+              <button class="dots-btn" type="button" (click)="rowMenu.toggle($event)" aria-label="Row actions">
+                <i class="pi pi-ellipsis-v"></i>
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template #paginatorright>
+          <p-select
+            [options]="pageSizeOptions"
+            optionLabel="label"
+            optionValue="value"
+            [(ngModel)]="pageSize"
+            size="small"
+          />
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Footer action bar -->
+    <div class="action-bar up-card">
+      <div class="action-summary">
+        <strong>{{ selectedRows.length }} loans selected</strong>
+        <span>Total UPB: {{ loansService.selectedUpb() | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
+      </div>
+      <span class="action-hint">Select one or more loans and take action.</span>
+      <div class="action-buttons">
+        <p-button
+          label="Refresh Pricing"
+          icon="pi pi-refresh"
+          severity="secondary"
+          [outlined]="true"
+          [disabled]="selectedRows.length === 0"
+          (onClick)="refreshPricing()"
+        />
+        <p-button
+          label="Propose Commitment"
+          icon="pi pi-file-check"
+          [disabled]="selectedRows.length === 0"
+          (onClick)="proposeCommitment()"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ RIGHT RAIL ============================ -->
+  <aside class="right-rail">
+    <div class="up-card rail-card">
+      <h3 class="rail-title">Pipeline Overview</h3>
+
+      <div class="up-section-label">Loan Sources</div>
+      <div class="donut-row">
+        <div class="donut-wrap">
+          <p-chart type="doughnut" [data]="donutData()" [options]="donutOptions" height="120px" width="120px" />
+        </div>
+        <ul class="legend">
+          <li>
+            <span class="dot" style="background: var(--up-chart-1)"></span>
+            <span class="legend-label">From Desktop Underwriter</span>
+            <strong>{{ loansService.duCount() | number }} ({{ duPercent() }}%)</strong>
+          </li>
+          <li>
+            <span class="dot" style="background: var(--up-chart-2)"></span>
+            <span class="legend-label">Imported by User</span>
+            <strong>{{ loansService.importedCount() | number }} ({{ 100 - duPercent() }}%)</strong>
+          </li>
+        </ul>
+      </div>
+
+      <div class="rail-stats">
+        <div class="stat-row">
+          <span>Total Loans</span>
+          <strong>{{ loansService.totalLoans() | number }}</strong>
+        </div>
+        <div class="stat-row">
+          <span>Total UPB</span>
+          <strong>{{ millions(loansService.totalUpb()) }}</strong>
+        </div>
+      </div>
+
+      <div class="up-section-label">Status Breakdown</div>
+      <ul class="status-list">
+        <li>
+          <span class="dot" style="background: var(--up-status-ready)"></span>
+          <span class="legend-label">Ready for Pricing</span>
+          <strong>{{ loansService.ready().length | number }}</strong>
+        </li>
+        <li>
+          <span class="dot" style="background: var(--up-chart-3)"></span>
+          <span class="legend-label">Missing Data</span>
+          <strong>{{ loansService.missing().length | number }}</strong>
+        </li>
+        <li>
+          <span class="dot" style="background: var(--up-border-strong)"></span>
+          <span class="legend-label">Ineligible</span>
+          <strong>{{ loansService.ineligible().length | number }}</strong>
+        </li>
+      </ul>
+
+      <div class="rail-divider"></div>
+
+      <div class="up-section-label">Import Loans</div>
+      <p class="rail-text">Add loans that were not underwritten in Desktop Underwriter.</p>
+      <p-button label="Import Loans" icon="pi pi-cloud-upload" severity="secondary" [outlined]="true" size="small" styleClass="rail-btn" />
+
+      <div class="rail-divider"></div>
+
+      <div class="rail-help">
+        <h4>Need help?</h4>
+        <p class="rail-text">Learn more about imported loans and eligibility requirements.</p>
+        <a class="learn-link">Learn more <i class="pi pi-external-link"></i></a>
+      </div>
+    </div>
+  </aside>
+</div>

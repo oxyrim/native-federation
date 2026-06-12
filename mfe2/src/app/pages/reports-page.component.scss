@@ -1,0 +1,145 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.up-card {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+.name {
+  font-weight: 500;
+}
+
+.muted {
+  color: var(--up-text-muted, #8a909b);
+}
+
+.row-actions {
+  text-align: right;
+}
+
+.governance {
+  h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    i {
+      color: var(--up-status-ready, #16794c);
+    }
+  }
+
+  p {
+    color: var(--up-text-secondary, #5d6470);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  h4 {
+    margin: 1.25rem 0 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+.violation {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: var(--up-status-error-bg, #fdecea);
+  color: var(--up-status-error, #c0392b);
+
+  code {
+    font-size: 0.75rem;
+    word-break: break-word;
+  }
+}
+
+.audit {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.75rem;
+  font-family: ui-monospace, monospace;
+  max-height: 260px;
+  overflow: auto;
+
+  li {
+    display: flex;
+    gap: 8px;
+    padding: 4px 6px;
+    border-bottom: 1px solid var(--up-border, #e3e5e9);
+
+    &.denied {
+      background: var(--up-status-error-bg, #fdecea);
+    }
+
+    .when {
+      color: var(--up-text-muted, #8a909b);
+    }
+
+    .app {
+      color: var(--up-primary-600, #1f5bd6);
+      min-width: 9ch;
+    }
+
+    .action {
+      font-weight: 600;
+      min-width: 8ch;
+    }
+
+    .detail {
+      color: var(--up-text-muted, #8a909b);
+    }
+  }
+}
+
+.report-detail {
+  margin: 0;
+
+  > div {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--up-border, #e3e5e9);
+    font-size: 0.875rem;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  dt {
+    color: var(--up-text-secondary, #5d6470);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

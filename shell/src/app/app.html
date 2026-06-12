@@ -1,0 +1,82 @@
+<div class="layout" [class.collapsed]="collapsed()">
+  <!-- ======================= SIDEBAR ======================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-logo">U</span>
+      @if (!collapsed()) {
+        <span class="brand-name">Unified Platform</span>
+      }
+    </div>
+
+    <nav class="nav">
+      @for (section of sections; track section.label) {
+        @if (!collapsed()) {
+          <div class="nav-section">{{ section.label }}</div>
+        }
+        @for (item of section.items; track item.link) {
+          <a
+            class="nav-item"
+            [routerLink]="item.link"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.exact }"
+            [title]="item.label"
+          >
+            <i [class]="item.icon"></i>
+            @if (!collapsed()) {
+              <span>{{ item.label }}</span>
+            }
+          </a>
+        }
+      }
+    </nav>
+
+    <button class="collapse-btn" type="button" (click)="toggleSidebar()">
+      <i class="pi" [class.pi-angle-double-left]="!collapsed()" [class.pi-angle-double-right]="collapsed()"></i>
+      @if (!collapsed()) {
+        <span>Collapse</span>
+      }
+    </button>
+  </aside>
+
+  <!-- ======================= MAIN ======================= -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <p-button label="Import Loans" icon="pi pi-cloud-upload" severity="secondary" [outlined]="true" size="small" />
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" [outlined]="true" size="small" />
+
+        <span class="divider"></span>
+
+        <button
+          class="icon-btn"
+          type="button"
+          [attr.aria-label]="bridge.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+          (click)="bridge.toggleTheme()"
+        >
+          <i class="pi" [class.pi-moon]="bridge.theme() === 'light'" [class.pi-sun]="bridge.theme() === 'dark'"></i>
+        </button>
+        <p-overlaybadge value="4" severity="danger" badgeSize="small">
+          <button class="icon-btn" type="button" aria-label="Notifications">
+            <i class="pi pi-bell"></i>
+          </button>
+        </p-overlaybadge>
+        <button class="icon-btn" type="button" aria-label="Help">
+          <i class="pi pi-question-circle"></i>
+        </button>
+
+        @if (bridge.user(); as user) {
+          <div class="user">
+            <p-avatar [label]="user.initials" shape="circle" styleClass="user-avatar" />
+            <span class="user-name">{{ user.displayName }}</span>
+            <i class="pi pi-angle-down"></i>
+          </div>
+        }
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

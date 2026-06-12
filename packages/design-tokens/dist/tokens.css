@@ -1,0 +1,317 @@
+/* =============================================================================
+   DESIGN TOKENS — Unified Platform Design System
+   Ported from poc/mfe-ds (source of truth). Light mode at :root; dark mode
+   overrides via [data-theme="dark"]. These CSS custom properties are inherited
+   by all microfrontends in the same DOM.
+   ============================================================================= */
+
+:root,
+[data-theme='light'] {
+  /* --- Brand / Primary --- */
+  --ds-color-primary-50:  #eff6ff;
+  --ds-color-primary-100: #dbeafe;
+  --ds-color-primary-200: #bfdbfe;
+  --ds-color-primary-300: #93c5fd;
+  --ds-color-primary-400: #60a5fa;
+  --ds-color-primary-500: #3b82f6;
+  --ds-color-primary-600: #2563eb;
+  --ds-color-primary-700: #1d4ed8;
+  --ds-color-primary-800: #1e40af;
+  --ds-color-primary-900: #1e3a8a;
+
+  --ds-color-primary:       var(--ds-color-primary-600);
+  --ds-color-primary-hover: var(--ds-color-primary-700);
+  --ds-color-primary-light: var(--ds-color-primary-50);
+
+  /* --- Sidebar --- */
+  --ds-sidebar-bg:           #1b2739;
+  --ds-sidebar-bg-hover:     #243247;
+  --ds-sidebar-bg-active:    rgba(59, 130, 246, 0.15);
+  --ds-sidebar-border:       #253348;
+  --ds-sidebar-text:         #8fa4b8;
+  --ds-sidebar-text-hover:   #c8d8e8;
+  --ds-sidebar-text-active:  #ffffff;
+  --ds-sidebar-icon:         #6b88a4;
+  --ds-sidebar-icon-active:  var(--ds-color-primary-400);
+  --ds-sidebar-section-text: #4d6578;
+  --ds-sidebar-width:        220px;
+  --ds-sidebar-width-collapsed: 60px;
+  --ds-sidebar-logo-bg:      #151f2e;
+
+  /* --- Backgrounds --- */
+  --ds-bg-app:       #f1f4f8;
+  --ds-bg-surface:   #ffffff;
+  --ds-bg-surface-2: #f8fafc;
+  --ds-bg-overlay:   rgba(0, 0, 0, 0.5);
+
+  /* --- Text --- */
+  --ds-text-primary:   #0f172a;
+  --ds-text-secondary: #475569;
+  --ds-text-tertiary:  #94a3b8;
+  --ds-text-disabled:  #cbd5e1;
+  --ds-text-inverse:   #ffffff;
+  --ds-text-link:      var(--ds-color-primary-600);
+
+  /* --- Borders --- */
+  --ds-border-color:        #e2e8f0;
+  --ds-border-color-strong: #cbd5e1;
+  --ds-border-radius-sm:   4px;
+  --ds-border-radius-md:   6px;
+  --ds-border-radius-lg:   8px;
+  --ds-border-radius-xl:   12px;
+  --ds-border-radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --ds-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --ds-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --ds-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --ds-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --ds-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+
+  /* --- Status Colors --- */
+  --ds-color-success:        #22c55e;
+  --ds-color-success-bg:     #f0fdf4;
+  --ds-color-success-border: #bbf7d0;
+  --ds-color-success-text:   #166534;
+
+  --ds-color-warning:        #f59e0b;
+  --ds-color-warning-bg:     #fffbeb;
+  --ds-color-warning-border: #fde68a;
+  --ds-color-warning-text:   #92400e;
+
+  --ds-color-danger:         #ef4444;
+  --ds-color-danger-bg:      #fef2f2;
+  --ds-color-danger-border:  #fecaca;
+  --ds-color-danger-text:    #991b1b;
+
+  --ds-color-info:           #3b82f6;
+  --ds-color-info-bg:        #eff6ff;
+  --ds-color-info-border:    #bfdbfe;
+  --ds-color-info-text:      #1e40af;
+
+  --ds-color-neutral:        #94a3b8;
+  --ds-color-neutral-bg:     #f8fafc;
+  --ds-color-neutral-border: #e2e8f0;
+  --ds-color-neutral-text:   #475569;
+
+  /* --- Header --- */
+  --ds-header-bg:     #ffffff;
+  --ds-header-border: #e2e8f0;
+  --ds-header-height: 60px;
+
+  /* --- Table --- */
+  --ds-table-header-bg:    #f8fafc;
+  --ds-table-row-bg:       #ffffff;
+  --ds-table-row-bg-alt:   #fafbfc;
+  --ds-table-row-hover:    #f1f5f9;
+  --ds-table-border:       #e2e8f0;
+  --ds-table-header-text:  #64748b;
+
+  /* --- Transition --- */
+  --ds-transition-fast:   150ms ease;
+  --ds-transition-normal: 250ms ease;
+  --ds-transition-slow:   400ms ease;
+
+  /* --- Charts (chart.js cannot read these; mirrored in chartTheme()) --- */
+  --ds-chart-grid: rgba(15, 23, 42, 0.08);
+  --ds-chart-text: #475569;
+
+  color-scheme: light;
+}
+
+/* --- Typography (from _typography.scss) --- */
+:root {
+  --ds-font-family:      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --ds-font-family-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+
+  --ds-font-size-xs:   11px;
+  --ds-font-size-sm:   12px;
+  --ds-font-size-base: 13px;
+  --ds-font-size-md:   14px;
+  --ds-font-size-lg:   16px;
+  --ds-font-size-xl:   18px;
+  --ds-font-size-2xl:  20px;
+  --ds-font-size-3xl:  24px;
+  --ds-font-size-4xl:  28px;
+
+  --ds-font-weight-normal:   400;
+  --ds-font-weight-medium:   500;
+  --ds-font-weight-semibold: 600;
+  --ds-font-weight-bold:     700;
+
+  --ds-line-height-tight:  1.25;
+  --ds-line-height-normal: 1.5;
+  --ds-line-height-loose:  1.75;
+
+  --ds-letter-spacing-tight:  -0.01em;
+  --ds-letter-spacing-normal: 0;
+  --ds-letter-spacing-wide:   0.02em;
+  --ds-letter-spacing-wider:  0.05em;
+}
+
+/* --- Spacing (from _spacing.scss) --- */
+:root {
+  --ds-space-0:   0px;
+  --ds-space-px:  1px;
+  --ds-space-0-5: 2px;
+  --ds-space-1:   4px;
+  --ds-space-1-5: 6px;
+  --ds-space-2:   8px;
+  --ds-space-2-5: 10px;
+  --ds-space-3:   12px;
+  --ds-space-3-5: 14px;
+  --ds-space-4:   16px;
+  --ds-space-5:   20px;
+  --ds-space-6:   24px;
+  --ds-space-7:   28px;
+  --ds-space-8:   32px;
+  --ds-space-9:   36px;
+  --ds-space-10:  40px;
+  --ds-space-12:  48px;
+  --ds-space-14:  56px;
+  --ds-space-16:  64px;
+  --ds-space-20:  80px;
+  --ds-space-24:  96px;
+}
+
+/* =============================================================================
+   DARK MODE OVERRIDES (from _tokens.scss)
+   ============================================================================= */
+[data-theme='dark'] {
+  --ds-bg-app:       #0f172a;
+  --ds-bg-surface:   #1e293b;
+  --ds-bg-surface-2: #0f172a;
+  --ds-bg-overlay:   rgba(0, 0, 0, 0.6);
+
+  --ds-text-primary:   #f1f5f9;
+  --ds-text-secondary: #94a3b8;
+  --ds-text-tertiary:  #64748b;
+  --ds-text-disabled:  #334155;
+  --ds-text-link:      var(--ds-color-primary-400);
+
+  --ds-border-color:        #1e293b;
+  --ds-border-color-strong: #334155;
+
+  --ds-header-bg:     #1e293b;
+  --ds-header-border: #334155;
+
+  --ds-table-header-bg:    #1e293b;
+  --ds-table-row-bg:       #1e293b;
+  --ds-table-row-bg-alt:   #162032;
+  --ds-table-row-hover:    #253047;
+  --ds-table-border:       #334155;
+  --ds-table-header-text:  #94a3b8;
+
+  --ds-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --ds-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --ds-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  --ds-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4), 0 4px 6px rgba(0, 0, 0, 0.2);
+
+  /* --- Status colors on dark surfaces (addition: source DS does not override
+     these, which would leave light pastel chips glowing on dark cards) --- */
+  --ds-color-success-bg:     rgba(34, 197, 94, 0.12);
+  --ds-color-success-border: rgba(34, 197, 94, 0.35);
+  --ds-color-success-text:   #4ade80;
+
+  --ds-color-warning-bg:     rgba(245, 158, 11, 0.12);
+  --ds-color-warning-border: rgba(245, 158, 11, 0.35);
+  --ds-color-warning-text:   #fbbf24;
+
+  --ds-color-danger-bg:      rgba(239, 68, 68, 0.12);
+  --ds-color-danger-border:  rgba(239, 68, 68, 0.35);
+  --ds-color-danger-text:    #f87171;
+
+  --ds-color-info-bg:        rgba(59, 130, 246, 0.16);
+  --ds-color-info-border:    rgba(59, 130, 246, 0.4);
+  --ds-color-info-text:      #93c5fd;
+
+  --ds-color-neutral-bg:     rgba(148, 163, 184, 0.12);
+  --ds-color-neutral-border: rgba(148, 163, 184, 0.3);
+  --ds-color-neutral-text:   #94a3b8;
+
+  --ds-chart-grid: rgba(241, 245, 249, 0.08);
+  --ds-chart-text: #94a3b8;
+
+  color-scheme: dark;
+}
+
+/* =============================================================================
+   COMPATIBILITY ALIASES — legacy --up-* names used by existing components.
+   Aliases resolve through var() at usage time, so dark-mode overrides of the
+   --ds-* sources flow through automatically.
+   ============================================================================= */
+:root {
+  --up-sidebar-bg: var(--ds-sidebar-bg);
+  --up-sidebar-bg-active: var(--ds-sidebar-bg-active);
+  --up-sidebar-text: var(--ds-sidebar-text);
+  --up-sidebar-text-active: var(--ds-sidebar-text-active);
+  --up-sidebar-section: var(--ds-sidebar-section-text);
+  --up-brand-accent: var(--ds-color-primary);
+
+  --up-primary-50: var(--ds-color-primary-50);
+  --up-primary-100: var(--ds-color-primary-100);
+  --up-primary-200: var(--ds-color-primary-200);
+  --up-primary-300: var(--ds-color-primary-300);
+  --up-primary-400: var(--ds-color-primary-400);
+  --up-primary-500: var(--ds-color-primary-500);
+  --up-primary-600: var(--ds-color-primary-600);
+  --up-primary-700: var(--ds-color-primary-700);
+  --up-primary-800: var(--ds-color-primary-800);
+  --up-primary-900: var(--ds-color-primary-900);
+
+  --up-status-ready: var(--ds-color-success-text);
+  --up-status-ready-bg: var(--ds-color-success-bg);
+  --up-status-warn: var(--ds-color-warning-text);
+  --up-status-warn-bg: var(--ds-color-warning-bg);
+  --up-status-error: var(--ds-color-danger-text);
+  --up-status-error-bg: var(--ds-color-danger-bg);
+  --up-status-neutral: var(--ds-color-neutral-text);
+  --up-status-neutral-bg: var(--ds-color-neutral-bg);
+
+  --up-surface-page: var(--ds-bg-app);
+  --up-surface-card: var(--ds-bg-surface);
+  --up-surface-raised: var(--ds-bg-surface-2);
+  --up-border: var(--ds-border-color);
+  --up-border-strong: var(--ds-border-color-strong);
+
+  --up-text-primary: var(--ds-text-primary);
+  --up-text-secondary: var(--ds-text-secondary);
+  --up-text-muted: var(--ds-text-tertiary);
+  --up-text-inverse: var(--ds-text-inverse);
+
+  --up-font-family: var(--ds-font-family);
+  --up-font-size-xs: var(--ds-font-size-xs);
+  --up-font-size-sm: var(--ds-font-size-sm);
+  --up-font-size-md: var(--ds-font-size-base);
+  --up-font-size-lg: var(--ds-font-size-lg);
+  --up-font-size-xl: var(--ds-font-size-2xl);
+  --up-font-size-2xl: var(--ds-font-size-3xl);
+  --up-font-weight-regular: var(--ds-font-weight-normal);
+  --up-font-weight-medium: var(--ds-font-weight-medium);
+  --up-font-weight-semibold: var(--ds-font-weight-semibold);
+  --up-font-weight-bold: var(--ds-font-weight-bold);
+
+  --up-space-1: var(--ds-space-1);
+  --up-space-2: var(--ds-space-2);
+  --up-space-3: var(--ds-space-3);
+  --up-space-4: var(--ds-space-4);
+  --up-space-5: var(--ds-space-6);
+  --up-space-6: var(--ds-space-8);
+
+  --up-radius-sm: var(--ds-border-radius-sm);
+  --up-radius-md: var(--ds-border-radius-lg);
+  --up-radius-lg: var(--ds-border-radius-xl);
+  --up-shadow-card: var(--ds-shadow-sm);
+  --up-shadow-raised: var(--ds-shadow-lg);
+
+  --up-chart-1: #3b82f6;
+  --up-chart-2: #22c55e;
+  --up-chart-3: #f59e0b;
+  --up-chart-4: #8b5cf6;
+  --up-chart-5: #0ea5e9;
+  --up-chart-grid: var(--ds-chart-grid);
+  --up-chart-text: var(--ds-chart-text);
+
+  --up-focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  --up-overlay-mask: var(--ds-bg-overlay);
+}

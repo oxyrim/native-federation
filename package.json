@@ -1,0 +1,14 @@
+{
+  "name": "unified-platform-poc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Angular Native Federation POC — Angular 21 shell + Angular 21 remote + Angular 19 web-component remote",
+  "scripts": {
+    "build:packages": "npm run build --prefix packages/loan-bridge && npm run build --prefix packages/design-tokens",
+    "build:all": "npm run build:packages && npm run build --prefix mfe1 && npm run build --prefix mfe2 && npm run build --prefix shell",
+    "start:shell": "npm start --prefix shell",
+    "start:mfe1": "npm start --prefix mfe1",
+    "start:mfe2": "npm start --prefix mfe2",
+    "start": "npm run start:mfe1 & npm run start:mfe2 & npm run start:shell & wait"
+  }
+}

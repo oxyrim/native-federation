@@ -1,0 +1,129 @@
+<p-toast position="bottom-right" />
+
+<div class="grid">
+  <div class="up-card">
+    <div class="card-head">
+      <h3>Scheduled Reports</h3>
+      <p-button label="New Report" icon="pi pi-plus" size="small" [outlined]="true" />
+    </div>
+    <p-table
+      [value]="reports"
+      styleClass="p-datatable-sm"
+      sortField="name"
+      [sortOrder]="1"
+      selectionMode="single"
+      (onRowSelect)="selectedReport.set($any($event.data))"
+    >
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="name">Report <p-sortIcon field="name" /></th>
+          <th pSortableColumn="type">Type <p-sortIcon field="type" /></th>
+          <th>Schedule</th>
+          <th pSortableColumn="lastRun">Last Run <p-sortIcon field="lastRun" /></th>
+          <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-r>
+        <tr [pSelectableRow]="r">
+          <td class="name">{{ r.name }}</td>
+          <td>{{ r.type }}</td>
+          <td>{{ r.schedule }}</td>
+          <td class="muted">{{ r.lastRun }}</td>
+          <td>
+            <span
+              class="up-chip"
+              [class.ready]="r.status === 'Completed'"
+              [class.warn]="r.status === 'Running'"
+              [class.error]="r.status === 'Failed'"
+            >
+              {{ r.status }}
+            </span>
+          </td>
+          <td class="row-actions">
+            <p-button
+              icon="pi pi-play"
+              size="small"
+              [text]="true"
+              severity="secondary"
+              pTooltip="Run now"
+              (onClick)="runNow(r, $event)"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- ================= GOVERNANCE DEMO ================= -->
+  <div class="up-card governance">
+    <h3><i class="pi pi-shield"></i> Data-sharing Governance</h3>
+    <p>
+      Every cross-MFE channel is declared in the bridge's governance registry with explicit
+      publisher/subscriber allow-lists and payload validators. This MFE is
+      <strong>not allowed</strong> to trigger pricing — try it:
+    </p>
+    <p-button
+      label="Attempt to publish 'pricing/refresh' as mfe2-analytics"
+      icon="pi pi-bolt"
+      severity="danger"
+      [outlined]="true"
+      size="small"
+      (onClick)="attempt()"
+    />
+    @if (violation()) {
+      <div class="violation">
+        <i class="pi pi-ban"></i>
+        <code>{{ violation() }}</code>
+      </div>
+    }
+
+    <h4>Bridge audit log (live)</h4>
+    <ul class="audit">
+      @for (entry of auditEntries(); track entry.at + entry.appId + entry.action) {
+        <li [class.denied]="entry.action === 'denied'">
+          <span class="when">{{ entry.at | date: 'mediumTime' }}</span>
+          <span class="app">{{ entry.appId }}</span>
+          <span class="action">{{ entry.action }}</span>
+          <span class="channel">{{ entry.channel }}</span>
+          @if (entry.detail) {
+            <span class="detail">— {{ entry.detail }}</span>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+</div>
+
+<!-- Report detail dialog -->
+<p-dialog
+  [header]="selectedReport()?.name ?? 'Report'"
+  [visible]="selectedReport() !== null"
+  (visibleChange)="$event ? null : selectedReport.set(null)"
+  [modal]="true"
+  [style]="{ width: '24rem' }"
+>
+  @if (selectedReport(); as r) {
+    <dl class="report-detail">
+      <div><dt>Type</dt><dd>{{ r.type }}</dd></div>
+      <div><dt>Schedule</dt><dd>{{ r.schedule }}</dd></div>
+      <div><dt>Last run</dt><dd>{{ r.lastRun }}</dd></div>
+      <div><dt>Duration</dt><dd>{{ r.durationSec }}s</dd></div>
+      <div><dt>Rows produced</dt><dd>{{ r.rows }}</dd></div>
+      <div>
+        <dt>Status</dt>
+        <dd>
+          <span
+            class="up-chip"
+            [class.ready]="r.status === 'Completed'"
+            [class.warn]="r.status === 'Running'"
+            [class.error]="r.status === 'Failed'"
+          >{{ r.status }}</span>
+        </dd>
+      </div>
+    </dl>
+  }
+  <ng-template #footer>
+    <p-button label="Close" severity="secondary" [text]="true" size="small" (onClick)="selectedReport.set(null)" />
+  </ng-template>
+</p-dialog>

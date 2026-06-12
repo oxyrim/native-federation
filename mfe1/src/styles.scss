@@ -1,0 +1,317 @@
+/* Global styles — shell owns the page chrome; tokens + design-system classes
+   come from @loan/design-tokens (loaded via angular.json).
+   Base resets ported from the Unified Platform design system (poc/mfe-ds). */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--ds-font-family);
+  font-size: var(--ds-font-size-base);
+  color: var(--ds-text-primary);
+  background: var(--ds-bg-app);
+  line-height: var(--ds-line-height-normal);
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--ds-text-link);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* Scrollbar styling (from mfe-ds) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ds-border-color-strong);
+  border-radius: 3px;
+
+  &:hover {
+    background: var(--ds-text-tertiary);
+  }
+}
+
+/* ---- shared utility classes used by shell + MFEs (global on purpose,
+   so remotes do not need to re-ship them). Styled per the DS badge/card
+   specs; class names kept for existing components. ---- */
+
+.up-card {
+  background: var(--ds-bg-surface);
+  border: 1px solid var(--ds-border-color);
+  border-radius: var(--ds-border-radius-lg);
+  box-shadow: var(--ds-shadow-sm);
+}
+
+.up-page-title {
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
+  letter-spacing: var(--ds-letter-spacing-tight);
+  line-height: var(--ds-line-height-tight);
+  margin: 0;
+  color: var(--ds-text-primary);
+}
+
+.up-page-subtitle {
+  margin: var(--ds-space-1) 0 0;
+  color: var(--ds-text-secondary);
+  font-size: var(--ds-font-size-base);
+}
+
+.up-section-label {
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: var(--ds-letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--ds-text-tertiary);
+}
+
+/* status chips shared by all MFEs — DS badge colors + DS status-dot accent */
+.up-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-1-5);
+  padding: 2px var(--ds-space-2);
+  border-radius: var(--ds-border-radius-full);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: 1.4;
+  white-space: nowrap;
+  border: 1px solid transparent;
+
+  &::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  &.ready {
+    color: var(--ds-color-success-text);
+    background: var(--ds-color-success-bg);
+    border-color: var(--ds-color-success-border);
+
+    &::before {
+      background: var(--ds-color-success);
+    }
+  }
+
+  &.warn {
+    color: var(--ds-color-warning-text);
+    background: var(--ds-color-warning-bg);
+    border-color: var(--ds-color-warning-border);
+
+    &::before {
+      background: var(--ds-color-warning);
+    }
+  }
+
+  &.error {
+    color: var(--ds-color-danger-text);
+    background: var(--ds-color-danger-bg);
+    border-color: var(--ds-color-danger-border);
+
+    &::before {
+      background: var(--ds-color-danger);
+    }
+  }
+
+  &.neutral {
+    color: var(--ds-color-neutral-text);
+    background: var(--ds-color-neutral-bg);
+    border-color: var(--ds-color-neutral-border);
+
+    &::before {
+      background: var(--ds-color-neutral);
+    }
+  }
+}
+
+/* source badges — DS .ds-badge-du / .ds-badge-imported */
+.up-source-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: var(--ds-font-size-xs);
+
+  &.du {
+    background: var(--ds-color-info-bg);
+    color: var(--ds-color-info-text);
+    border: 1px solid var(--ds-color-info-border);
+    font-weight: var(--ds-font-weight-bold);
+  }
+
+  &.imported {
+    background: var(--ds-color-neutral-bg);
+    color: var(--ds-color-neutral-text);
+    border: 1px solid var(--ds-color-neutral-border);
+    font-weight: var(--ds-font-weight-normal);
+  }
+}
+
+/* shared p-table look (header bg + sm density) — used by Loan Pipeline,
+   Commitments and Pricing Results so every grid in the platform matches. */
+.up-table {
+  font-size: var(--ds-font-size-sm);
+
+  th {
+    white-space: nowrap;
+    color: var(--ds-text-secondary);
+    font-weight: var(--ds-font-weight-semibold);
+    background: var(--ds-bg-surface-2);
+  }
+
+  td {
+    white-space: nowrap;
+  }
+
+  td.num,
+  th.num {
+    text-align: right;
+  }
+
+  td.strong {
+    font-weight: var(--ds-font-weight-semibold);
+  }
+
+  td.negative {
+    color: var(--ds-color-danger-text);
+  }
+
+  .cell-id {
+    font-weight: var(--ds-font-weight-medium);
+  }
+
+  .cell-muted {
+    color: var(--ds-text-tertiary);
+  }
+}
+
+/* "Cross-App Messaging" widget — shared by shell Settings, MFE1 Commitments
+   and MFE2 Activity to demonstrate mfe-mfe / shell-mfe / mfe-shell delivery
+   over the @loan/bridge "notifications/broadcast" channel. */
+.bridge-messenger {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-4) var(--ds-space-5);
+
+  h3 {
+    margin: 0;
+    font-size: var(--ds-font-size-md);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    i {
+      color: var(--ds-color-primary-600);
+    }
+  }
+
+  .bm-hint {
+    margin: 0;
+    color: var(--ds-text-secondary);
+    font-size: var(--ds-font-size-sm);
+    line-height: 1.5;
+  }
+
+  .bm-compose {
+    display: flex;
+    gap: var(--ds-space-2);
+
+    input {
+      flex: 1;
+    }
+  }
+
+  .bm-feed {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+
+    li {
+      display: flex;
+      align-items: baseline;
+      gap: var(--ds-space-2);
+      padding: var(--ds-space-2) var(--ds-space-3);
+      border-radius: var(--ds-border-radius-md);
+      background: var(--ds-bg-surface-2);
+      border-left: 3px solid var(--ds-color-info-border);
+      font-size: var(--ds-font-size-sm);
+
+      &.success {
+        border-left-color: var(--ds-color-success-border);
+      }
+
+      &.warning {
+        border-left-color: var(--ds-color-warning-border);
+      }
+    }
+
+    .bm-from {
+      font-weight: var(--ds-font-weight-semibold);
+      white-space: nowrap;
+    }
+
+    .bm-text {
+      flex: 1;
+      color: var(--ds-text-secondary);
+    }
+
+    .bm-when {
+      color: var(--ds-text-tertiary);
+      font-size: var(--ds-font-size-xs);
+      white-space: nowrap;
+    }
+
+    .bm-empty {
+      color: var(--ds-text-tertiary);
+      font-size: var(--ds-font-size-sm);
+      padding: var(--ds-space-2) var(--ds-space-3);
+    }
+  }
+}

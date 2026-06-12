@@ -1,0 +1,143 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.quality-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: var(--up-text-secondary, #5d6470);
+    font-size: 0.875rem;
+  }
+
+  .head-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+}
+
+.meter-card {
+  padding: 1rem 1.25rem 1.25rem;
+
+  h3 {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+  }
+
+  .skeletons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.empty-hint {
+  color: var(--up-text-muted, #8a909b);
+  font-size: 0.8125rem;
+  margin: 0.5rem 0 0;
+}
+
+.up-card {
+  padding: 0.5rem;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+
+  i {
+    color: var(--up-primary-500, #2f6fed);
+  }
+
+  .panel-title {
+    font-weight: 600;
+  }
+
+  .panel-meta {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-right: 0.5rem;
+  }
+
+  .completeness {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: var(--up-text-muted, #8a909b);
+    font-weight: 400;
+  }
+}
+
+:host ::ng-deep .mini-bar {
+  width: 90px;
+  height: 6px;
+}
+
+.issue-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--up-border, #e3e5e9);
+    font-size: 0.875rem;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .field {
+      background: var(--up-surface-page, #f4f5f7);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      min-width: 12ch;
+    }
+
+    .rule {
+      flex: 1;
+      color: var(--up-text-secondary, #5d6470);
+    }
+
+    .affected {
+      color: var(--up-text-muted, #8a909b);
+      font-size: 0.8125rem;
+      white-space: nowrap;
+    }
+  }
+}
+
+.dialog-text {
+  margin: 0;
+  color: var(--up-text-secondary, #5d6470);
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  code {
+    background: var(--up-surface-page, #f4f5f7);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+}

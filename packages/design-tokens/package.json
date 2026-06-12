@@ -1,0 +1,23 @@
+{
+  "name": "@loan/design-tokens",
+  "version": "1.1.0",
+  "description": "Unified Platform design tokens — CSS custom properties + typed TS mirror",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tokens.css": "./dist/tokens.css",
+    "./design-system.css": "./dist/design-system.css"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && cp src/tokens.css src/design-system.css dist/"
+  },
+  "devDependencies": {
+    "typescript": "~5.6.3"
+  }
+}
