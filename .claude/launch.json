@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "shell",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:shell"],
+      "port": 4200
+    },
+    {
+      "name": "mfe1",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:mfe1"],
+      "port": 4201
+    },
+    {
+      "name": "mfe2",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:mfe2"],
+      "port": 4203
+    }
+  ]
+}
