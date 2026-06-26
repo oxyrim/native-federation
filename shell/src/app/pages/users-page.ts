@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
 
 interface PlatformUser {
   name: string;
@@ -13,18 +15,18 @@ interface PlatformUser {
 
 @Component({
   selector: 'app-users-page',
-  imports: [TableModule, AvatarModule, ButtonModule],
+  imports: [TableModule, AvatarModule, ButtonModule, CardModule, TagModule],
   template: `
-    <div class="page">
-      <div class="header">
+    <div class="p-4 flex flex-column gap-4">
+      <div class="flex justify-content-between align-items-start">
         <div>
-          <h1 class="up-page-title">Users</h1>
-          <p class="up-page-subtitle">Manage who can access the Unified Platform.</p>
+          <h1 class="text-3xl font-bold m-0">Users</h1>
+          <p class="mt-1 mb-0 text-color-secondary">Manage who can access the Unified Platform.</p>
         </div>
         <p-button label="Invite User" icon="pi pi-user-plus" size="small" />
       </div>
 
-      <div class="up-card">
+      <p-card>
         <p-table [value]="users" styleClass="p-datatable-sm">
           <ng-template #header>
             <tr>
@@ -37,7 +39,7 @@ interface PlatformUser {
           <ng-template #body let-u>
             <tr>
               <td>
-                <span class="user-cell">
+                <span class="inline-flex align-items-center gap-2 font-medium">
                   <p-avatar [label]="u.initials" shape="circle" />
                   {{ u.name }}
                 </span>
@@ -45,35 +47,17 @@ interface PlatformUser {
               <td>{{ u.email }}</td>
               <td>{{ u.role }}</td>
               <td>
-                <span class="up-chip" [class.ready]="u.status === 'Active'" [class.neutral]="u.status !== 'Active'">
-                  {{ u.status }}
-                </span>
+                <p-tag
+                  [value]="u.status"
+                  [severity]="u.status === 'Active' ? 'success' : 'secondary'"
+                />
               </td>
             </tr>
           </ng-template>
         </p-table>
-      </div>
+      </p-card>
     </div>
   `,
-  styles: [
-    `
-      .page {
-        padding: var(--up-space-5) var(--up-space-6);
-      }
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: var(--up-space-5);
-      }
-      .user-cell {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: var(--up-font-weight-medium);
-      }
-    `,
-  ],
 })
 export class UsersPage {
   readonly users: PlatformUser[] = [

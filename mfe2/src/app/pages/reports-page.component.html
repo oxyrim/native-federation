@@ -1,97 +1,100 @@
 <p-toast position="bottom-right" />
 
 <div class="grid">
-  <div class="up-card">
-    <div class="card-head">
-      <h3>Scheduled Reports</h3>
-      <p-button label="New Report" icon="pi pi-plus" size="small" [outlined]="true" />
-    </div>
-    <p-table
-      [value]="reports"
-      styleClass="p-datatable-sm"
-      sortField="name"
-      [sortOrder]="1"
-      selectionMode="single"
-      (onRowSelect)="selectedReport.set($any($event.data))"
-    >
-      <ng-template #header>
-        <tr>
-          <th pSortableColumn="name">Report <p-sortIcon field="name" /></th>
-          <th pSortableColumn="type">Type <p-sortIcon field="type" /></th>
-          <th>Schedule</th>
-          <th pSortableColumn="lastRun">Last Run <p-sortIcon field="lastRun" /></th>
-          <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
-          <th></th>
-        </tr>
-      </ng-template>
-      <ng-template #body let-r>
-        <tr [pSelectableRow]="r">
-          <td class="name">{{ r.name }}</td>
-          <td>{{ r.type }}</td>
-          <td>{{ r.schedule }}</td>
-          <td class="muted">{{ r.lastRun }}</td>
-          <td>
-            <span
-              class="up-chip"
-              [class.ready]="r.status === 'Completed'"
-              [class.warn]="r.status === 'Running'"
-              [class.error]="r.status === 'Failed'"
-            >
-              {{ r.status }}
-            </span>
-          </td>
-          <td class="row-actions">
-            <p-button
-              icon="pi pi-play"
-              size="small"
-              [text]="true"
-              severity="secondary"
-              pTooltip="Run now"
-              (onClick)="runNow(r, $event)"
-            />
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+  <div class="col-12 lg:col-7">
+    <p-card>
+      <div class="flex justify-content-between align-items-center mb-3">
+        <h3 class="m-0 text-base">Scheduled Reports</h3>
+        <p-button label="New Report" icon="pi pi-plus" size="small" [outlined]="true" />
+      </div>
+      <p-table
+        [value]="reports"
+        styleClass="p-datatable-sm"
+        sortField="name"
+        [sortOrder]="1"
+        selectionMode="single"
+        (onRowSelect)="selectedReport.set($any($event.data))"
+      >
+        <ng-template #header>
+          <tr>
+            <th pSortableColumn="name">Report <p-sortIcon field="name" /></th>
+            <th pSortableColumn="type">Type <p-sortIcon field="type" /></th>
+            <th>Schedule</th>
+            <th pSortableColumn="lastRun">Last Run <p-sortIcon field="lastRun" /></th>
+            <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-r>
+          <tr [pSelectableRow]="r">
+            <td class="font-medium">{{ r.name }}</td>
+            <td>{{ r.type }}</td>
+            <td>{{ r.schedule }}</td>
+            <td class="text-color-secondary">{{ r.lastRun }}</td>
+            <td>
+              <p-tag [value]="r.status" [severity]="statusSeverity(r.status)" />
+            </td>
+            <td class="text-right">
+              <p-button
+                icon="pi pi-play"
+                size="small"
+                [text]="true"
+                severity="secondary"
+                pTooltip="Run now"
+                (onClick)="runNow(r, $event)"
+              />
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
   </div>
 
   <!-- ================= GOVERNANCE DEMO ================= -->
-  <div class="up-card governance">
-    <h3><i class="pi pi-shield"></i> Data-sharing Governance</h3>
-    <p>
-      Every cross-MFE channel is declared in the bridge's governance registry with explicit
-      publisher/subscriber allow-lists and payload validators. This MFE is
-      <strong>not allowed</strong> to trigger pricing — try it:
-    </p>
-    <p-button
-      label="Attempt to publish 'pricing/refresh' as mfe2-analytics"
-      icon="pi pi-bolt"
-      severity="danger"
-      [outlined]="true"
-      size="small"
-      (onClick)="attempt()"
-    />
-    @if (violation()) {
-      <div class="violation">
-        <i class="pi pi-ban"></i>
-        <code>{{ violation() }}</code>
-      </div>
-    }
-
-    <h4>Bridge audit log (live)</h4>
-    <ul class="audit">
-      @for (entry of auditEntries(); track entry.at + entry.appId + entry.action) {
-        <li [class.denied]="entry.action === 'denied'">
-          <span class="when">{{ entry.at | date: 'mediumTime' }}</span>
-          <span class="app">{{ entry.appId }}</span>
-          <span class="action">{{ entry.action }}</span>
-          <span class="channel">{{ entry.channel }}</span>
-          @if (entry.detail) {
-            <span class="detail">— {{ entry.detail }}</span>
-          }
-        </li>
+  <div class="col-12 lg:col-5">
+    <p-card>
+      <h3 class="flex align-items-center gap-2 m-0 mb-2 text-base">
+        <i class="pi pi-shield text-green-600"></i> Data-sharing Governance
+      </h3>
+      <p class="text-color-secondary text-sm line-height-3">
+        Every cross-MFE channel is declared in the bridge's governance registry with explicit
+        publisher/subscriber allow-lists and payload validators. This MFE is
+        <strong>not allowed</strong> to trigger pricing — try it:
+      </p>
+      <p-button
+        label="Attempt to publish 'pricing/refresh' as mfe2-analytics"
+        icon="pi pi-bolt"
+        severity="danger"
+        [outlined]="true"
+        size="small"
+        (onClick)="attempt()"
+      />
+      @if (violation()) {
+        <div class="flex align-items-start gap-2 mt-3 p-3 border-round bg-red-100 text-red-700">
+          <i class="pi pi-ban"></i>
+          <code class="text-xs" style="word-break: break-word">{{ violation() }}</code>
+        </div>
       }
-    </ul>
+
+      <h4 class="mt-4 mb-2 text-sm">Bridge audit log (live)</h4>
+      <ul class="list-none m-0 p-0 text-xs overflow-auto" style="max-height: 260px; font-family: ui-monospace, monospace">
+        @for (entry of auditEntries(); track entry.at + entry.appId + entry.action) {
+          <li
+            class="flex gap-2 border-bottom-1 surface-border"
+            style="padding: 4px 6px"
+            [class.bg-red-100]="entry.action === 'denied'"
+          >
+            <span class="text-color-secondary">{{ entry.at | date: 'mediumTime' }}</span>
+            <span class="text-primary" style="min-width: 9ch">{{ entry.appId }}</span>
+            <span class="font-semibold" style="min-width: 8ch">{{ entry.action }}</span>
+            <span>{{ entry.channel }}</span>
+            @if (entry.detail) {
+              <span class="text-color-secondary">— {{ entry.detail }}</span>
+            }
+          </li>
+        }
+      </ul>
+    </p-card>
   </div>
 </div>
 
@@ -104,24 +107,25 @@
   [style]="{ width: '24rem' }"
 >
   @if (selectedReport(); as r) {
-    <dl class="report-detail">
-      <div><dt>Type</dt><dd>{{ r.type }}</dd></div>
-      <div><dt>Schedule</dt><dd>{{ r.schedule }}</dd></div>
-      <div><dt>Last run</dt><dd>{{ r.lastRun }}</dd></div>
-      <div><dt>Duration</dt><dd>{{ r.durationSec }}s</dd></div>
-      <div><dt>Rows produced</dt><dd>{{ r.rows }}</dd></div>
-      <div>
-        <dt>Status</dt>
-        <dd>
-          <span
-            class="up-chip"
-            [class.ready]="r.status === 'Completed'"
-            [class.warn]="r.status === 'Running'"
-            [class.error]="r.status === 'Failed'"
-          >{{ r.status }}</span>
-        </dd>
-      </div>
-    </dl>
+    <div class="flex justify-content-between py-2 border-bottom-1 surface-border text-sm">
+      <span class="text-color-secondary">Type</span><span class="font-medium">{{ r.type }}</span>
+    </div>
+    <div class="flex justify-content-between py-2 border-bottom-1 surface-border text-sm">
+      <span class="text-color-secondary">Schedule</span><span class="font-medium">{{ r.schedule }}</span>
+    </div>
+    <div class="flex justify-content-between py-2 border-bottom-1 surface-border text-sm">
+      <span class="text-color-secondary">Last run</span><span class="font-medium">{{ r.lastRun }}</span>
+    </div>
+    <div class="flex justify-content-between py-2 border-bottom-1 surface-border text-sm">
+      <span class="text-color-secondary">Duration</span><span class="font-medium">{{ r.durationSec }}s</span>
+    </div>
+    <div class="flex justify-content-between py-2 border-bottom-1 surface-border text-sm">
+      <span class="text-color-secondary">Rows produced</span><span class="font-medium">{{ r.rows }}</span>
+    </div>
+    <div class="flex justify-content-between py-2 align-items-center text-sm">
+      <span class="text-color-secondary">Status</span>
+      <p-tag [value]="r.status" [severity]="statusSeverity(r.status)" />
+    </div>
   }
   <ng-template #footer>
     <p-button label="Close" severity="secondary" [text]="true" size="small" (onClick)="selectedReport.set(null)" />

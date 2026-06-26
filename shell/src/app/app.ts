@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
+import { ToolbarModule } from 'primeng/toolbar';
 import { ShellBridgeService } from './core/bridge.service';
 
 interface NavItem {
@@ -19,7 +20,7 @@ interface NavSection {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ButtonModule, AvatarModule, OverlayBadgeModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ButtonModule, AvatarModule, OverlayBadgeModule, ToolbarModule],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

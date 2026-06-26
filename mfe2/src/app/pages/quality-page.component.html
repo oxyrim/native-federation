@@ -1,78 +1,79 @@
 <p-toast position="bottom-right" />
 
-<div class="quality-head">
-  <div>
-    <h2>Data Quality</h2>
-    <p>Completeness and rule violations across the pipeline — live from the governed bridge.</p>
-  </div>
-  <div class="head-actions">
-    <p-select
-      [options]="severityOptions"
-      optionLabel="label"
-      optionValue="value"
-      [ngModel]="severityFilter()"
-      (ngModelChange)="severityFilter.set($event)"
-      size="small"
-    />
-    <p-button
-      label="Run Validation"
-      icon="pi pi-play"
-      size="small"
-      [loading]="validating()"
-      (onClick)="openValidation()"
-    />
-  </div>
-</div>
-
-<div class="up-card meter-card">
-  <h3>Pipeline Completeness</h3>
-  @if (bridge.summary()) {
-    <p-metergroup [value]="meters()" labelPosition="end" />
-  } @else {
-    <div class="skeletons">
-      <p-skeleton height="1.25rem" />
-      <p-skeleton height="0.9rem" width="60%" />
+<div class="flex flex-column gap-3">
+  <div class="flex justify-content-between align-items-end gap-3">
+    <div>
+      <h2 class="m-0 text-xl">Data Quality</h2>
+      <p class="mt-1 mb-0 text-color-secondary text-sm">Completeness and rule violations across the pipeline — live from the governed bridge.</p>
     </div>
-    <p class="empty-hint">Waiting for the Loan Pipeline MFE to publish a summary…</p>
-  }
-</div>
+    <div class="flex align-items-center gap-2">
+      <p-select
+        [options]="severityOptions"
+        optionLabel="label"
+        optionValue="value"
+        [ngModel]="severityFilter()"
+        (ngModelChange)="severityFilter.set($event)"
+        size="small"
+      />
+      <p-button
+        label="Run Validation"
+        icon="pi pi-play"
+        size="small"
+        [loading]="validating()"
+        (onClick)="openValidation()"
+      />
+    </div>
+  </div>
 
-<div class="up-card">
-  <p-accordion [multiple]="true" [value]="['collateral']">
-    @for (cat of categories; track cat.key) {
-      <p-accordion-panel [value]="cat.key">
-        <p-accordion-header>
-          <span class="panel-header">
-            <i [class]="cat.icon"></i>
-            <span class="panel-title">{{ cat.title }}</span>
-            <span class="panel-meta">
-              <span class="completeness">
-                <p-progressbar [value]="cat.completeness" [showValue]="false" styleClass="mini-bar" />
-                {{ cat.completeness }}% complete
-              </span>
-              <p-tag [value]="issuesFor(cat).length + ' issues'" severity="secondary" />
-            </span>
-          </span>
-        </p-accordion-header>
-        <p-accordion-content>
-          @if (issuesFor(cat).length === 0) {
-            <p class="empty-hint">No issues at this severity.</p>
-          } @else {
-            <ul class="issue-list">
-              @for (issue of issuesFor(cat); track issue.field + issue.rule) {
-                <li>
-                  <code class="field">{{ issue.field }}</code>
-                  <span class="rule">{{ issue.rule }}</span>
-                  <span class="affected">{{ issue.affected | number }} loans</span>
-                  <p-tag [value]="issue.severity" [severity]="severityTag(issue.severity)" />
-                </li>
-              }
-            </ul>
-          }
-        </p-accordion-content>
-      </p-accordion-panel>
+  <p-card header="Pipeline Completeness">
+    @if (bridge.summary()) {
+      <p-metergroup [value]="meters()" labelPosition="end" />
+    } @else {
+      <div class="flex flex-column gap-2">
+        <p-skeleton height="1.25rem" />
+        <p-skeleton height="0.9rem" width="60%" />
+      </div>
+      <p class="mt-2 mb-0 text-color-secondary text-sm">Waiting for the Loan Pipeline MFE to publish a summary…</p>
     }
-  </p-accordion>
+  </p-card>
+
+  <p-card>
+    <p-accordion [multiple]="true" [value]="['collateral']">
+      @for (cat of categories; track cat.key) {
+        <p-accordion-panel [value]="cat.key">
+          <p-accordion-header>
+            <span class="flex align-items-center gap-2 flex-1" style="min-width: 0">
+              <i [class]="cat.icon" class="text-primary"></i>
+              <span class="font-semibold">{{ cat.title }}</span>
+              <span class="ml-auto flex align-items-center gap-3 pr-2">
+                <span class="flex align-items-center gap-2 text-xs text-color-secondary font-normal">
+                  <p-progressbar [value]="cat.completeness" [showValue]="false" [style]="{ width: '90px', height: '6px' }" />
+                  {{ cat.completeness }}% complete
+                </span>
+                <p-tag [value]="issuesFor(cat).length + ' issues'" severity="secondary" />
+              </span>
+            </span>
+          </p-accordion-header>
+          <p-accordion-content>
+            @if (issuesFor(cat).length === 0) {
+              <p class="mt-2 mb-0 text-color-secondary text-sm">No issues at this severity.</p>
+            } @else {
+              <ul class="list-none m-0 p-0">
+                @for (issue of issuesFor(cat); track issue.field + issue.rule) {
+                  <li class="flex align-items-center gap-3 border-bottom-1 surface-border text-sm" style="padding: 10px 4px">
+                    <code class="surface-100 border-round text-xs" style="padding: 2px 7px; min-width: 12ch">{{ issue.field }}</code>
+                    <span class="flex-1 text-color-secondary">{{ issue.rule }}</span>
+                    <span class="text-color-secondary text-sm white-space-nowrap">{{ issue.affected | number }} loans</span>
+                    <p-tag [value]="issue.severity" [severity]="severityTag(issue.severity)" />
+                  </li>
+                }
+              </ul>
+            }
+          </p-accordion-content>
+        </p-accordion-panel>
+      }
+    </p-accordion>
+  </p-card>
 </div>
 
 <!-- Modal dialog: PrimeNG 19 overlay rendered from INSIDE the web component.
@@ -84,7 +85,7 @@
   [modal]="true"
   [style]="{ width: '26rem' }"
 >
-  <p class="dialog-text">
+  <p class="m-0 text-color-secondary text-sm line-height-3">
     Validates all 1,245 loans against 8 agency eligibility rules. Pricing is not affected —
     this analytics MFE has no permission to publish on <code>pricing/refresh</code>.
   </p>

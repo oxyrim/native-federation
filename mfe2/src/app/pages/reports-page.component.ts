@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
+import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
@@ -23,10 +24,9 @@ interface ReportRow {
 @Component({
   selector: 'mfe2-reports-page',
   standalone: true,
-  imports: [DatePipe, TableModule, ButtonModule, TagModule, DialogModule, ToastModule, TooltipModule],
+  imports: [DatePipe, TableModule, ButtonModule, TagModule, CardModule, DialogModule, ToastModule, TooltipModule],
   providers: [MessageService],
   templateUrl: './reports-page.component.html',
-  styleUrls: ['./reports-page.component.scss'],
 })
 export class ReportsPageComponent {
   private readonly bridge = inject(AnalyticsBridgeService);
@@ -52,6 +52,10 @@ export class ReportsPageComponent {
       this.auditEntries.update((list) => [entry, ...list].slice(0, 12));
     });
     this.destroyRef.onDestroy(unsubscribe);
+  }
+
+  protected statusSeverity(status: ReportRow['status']): 'success' | 'warn' | 'danger' {
+    return status === 'Completed' ? 'success' : status === 'Running' ? 'warn' : 'danger';
   }
 
   protected attempt(): void {

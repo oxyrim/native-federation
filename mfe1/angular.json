@@ -60,6 +60,7 @@
               "node_modules/@loan/design-tokens/dist/tokens.css",
               "node_modules/@loan/design-tokens/dist/design-system.css",
               "node_modules/primeicons/primeicons.css",
+              "node_modules/primeflex/primeflex.css",
               "src/styles.scss"
             ],
             "polyfills": [

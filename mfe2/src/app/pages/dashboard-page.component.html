@@ -1,58 +1,71 @@
 @if (bridge.summary(); as s) {
-  <div class="kpi-row">
-    <div class="up-card kpi">
-      <span class="kpi-label">Total Loans</span>
-      <strong class="kpi-value">{{ s.totalLoans | number }}</strong>
-      <span class="kpi-sub">UPB {{ millions(s.totalUpb) }}</span>
+  <div class="grid">
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-card>
+        <span class="text-sm font-medium text-color-secondary">Total Loans</span>
+        <div class="text-3xl font-bold mt-1">{{ s.totalLoans | number }}</div>
+        <span class="text-sm text-color-secondary">UPB {{ millions(s.totalUpb) }}</span>
+      </p-card>
     </div>
-    <div class="up-card kpi">
-      <span class="kpi-label">Ready for Pricing</span>
-      <strong class="kpi-value accent-ready">{{ s.readyForPricing | number }}</strong>
-      <span class="kpi-sub">UPB {{ millions(s.readyUpb) }}</span>
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-card>
+        <span class="text-sm font-medium text-color-secondary">Ready for Pricing</span>
+        <div class="text-3xl font-bold mt-1 text-green-600">{{ s.readyForPricing | number }}</div>
+        <span class="text-sm text-color-secondary">UPB {{ millions(s.readyUpb) }}</span>
+      </p-card>
     </div>
-    <div class="up-card kpi">
-      <span class="kpi-label">Missing Data</span>
-      <strong class="kpi-value accent-warn">{{ s.missingData | number }}</strong>
-      <span class="kpi-sub">UPB {{ millions(s.missingUpb) }}</span>
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-card>
+        <span class="text-sm font-medium text-color-secondary">Missing Data</span>
+        <div class="text-3xl font-bold mt-1 text-yellow-600">{{ s.missingData | number }}</div>
+        <span class="text-sm text-color-secondary">UPB {{ millions(s.missingUpb) }}</span>
+      </p-card>
     </div>
-    <div class="up-card kpi">
-      <span class="kpi-label">Selected in Pipeline</span>
-      <strong class="kpi-value accent-primary">{{ bridge.selection()?.selectedLoanIds?.length ?? 0 }}</strong>
-      <span class="kpi-sub">
-        UPB {{ (bridge.selection()?.totalSelectedUpb ?? 0) | currency: 'USD' : 'symbol' : '1.0-0' }}
-      </span>
-    </div>
-  </div>
-
-  <div class="charts-grid">
-    <div class="up-card chart-card">
-      <h3>Loan Sources</h3>
-      <div class="chart-box"><p-chart type="doughnut" [data]="sourcesData()" [options]="doughnutOptions()" /></div>
-    </div>
-    <div class="up-card chart-card">
-      <h3>Status Breakdown</h3>
-      <div class="chart-box"><p-chart type="bar" [data]="statusData()" [options]="barOptions()" /></div>
-    </div>
-    <div class="up-card chart-card wide">
-      <h3>Pricing Trend (6 months)</h3>
-      <div class="chart-box"><p-chart type="line" [data]="trendData" [options]="lineOptions()" /></div>
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-card>
+        <span class="text-sm font-medium text-color-secondary">Selected in Pipeline</span>
+        <div class="text-3xl font-bold mt-1 text-primary">{{ bridge.selection()?.selectedLoanIds?.length ?? 0 }}</div>
+        <span class="text-sm text-color-secondary">
+          UPB {{ (bridge.selection()?.totalSelectedUpb ?? 0) | currency: 'USD' : 'symbol' : '1.0-0' }}
+        </span>
+      </p-card>
     </div>
   </div>
 
-  <div class="footnote">
-    <i class="pi pi-shield"></i>
+  <div class="grid mt-1">
+    <div class="col-12 md:col-6">
+      <p-card header="Loan Sources">
+        <div style="height: 240px"><p-chart type="doughnut" [data]="sourcesData()" [options]="doughnutOptions()" /></div>
+      </p-card>
+    </div>
+    <div class="col-12 md:col-6">
+      <p-card header="Status Breakdown">
+        <div style="height: 240px"><p-chart type="bar" [data]="statusData()" [options]="barOptions()" /></div>
+      </p-card>
+    </div>
+    <div class="col-12">
+      <p-card header="Pricing Trend (6 months)">
+        <div style="height: 260px"><p-chart type="line" [data]="trendData" [options]="lineOptions()" /></div>
+      </p-card>
+    </div>
+  </div>
+
+  <div class="flex align-items-center gap-2 mt-3 text-sm text-color-secondary">
+    <i class="pi pi-shield text-green-600"></i>
     Data received via the governed <code>pipeline/summary</code> and <code>pipeline/selection</code>
     channels of <strong>&#64;loan/bridge</strong> — published by MFE1 (Angular 21), consumed here (Angular 19).
     Updated {{ s.asOf | date: 'shortTime' }}.
   </div>
 } @else {
-  <div class="up-card empty-state">
-    <i class="pi pi-inbox"></i>
-    <h3>No pipeline data yet</h3>
-    <p>
-      The Loan Pipeline MFE has not published a summary in this session. Open the pipeline once —
-      its data will appear here instantly via the shared bridge.
-    </p>
-    <p-button label="Open Loan Pipeline" icon="pi pi-arrow-right" size="small" (onClick)="goToPipeline()" />
-  </div>
+  <p-card>
+    <div class="flex flex-column align-items-center gap-2 text-center py-6">
+      <i class="pi pi-inbox text-4xl text-color-secondary"></i>
+      <h3 class="m-0">No pipeline data yet</h3>
+      <p class="text-color-secondary text-sm" style="max-width: 460px">
+        The Loan Pipeline MFE has not published a summary in this session. Open the pipeline once —
+        its data will appear here instantly via the shared bridge.
+      </p>
+      <p-button label="Open Loan Pipeline" icon="pi pi-arrow-right" size="small" (onClick)="goToPipeline()" />
+    </div>
+  </p-card>
 }

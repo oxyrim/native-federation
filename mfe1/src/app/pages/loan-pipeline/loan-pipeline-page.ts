@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
 import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
@@ -28,6 +30,8 @@ type IdentifierKind = 'case' | 'seller';
     RouterLink,
     TableModule,
     ButtonModule,
+    CardModule,
+    TagModule,
     InputTextModule,
     IconFieldModule,
     InputIconModule,
@@ -39,7 +43,6 @@ type IdentifierKind = 'case' | 'seller';
     MultiSelectModule,
   ],
   templateUrl: './loan-pipeline-page.html',
-  styleUrl: './loan-pipeline-page.scss',
 })
 export class LoanPipelinePage {
   protected readonly loansService = inject(LoansService);
@@ -156,5 +159,9 @@ export class LoanPipelinePage {
     if (llpa === null) return '—';
     const abs = Math.abs(llpa).toFixed(3);
     return llpa < 0 ? `(${abs})` : abs;
+  }
+
+  protected statusSeverity(status: LoanStatus): 'success' | 'warn' | 'secondary' {
+    return status === 'Ready for Pricing' ? 'success' : status === 'Missing Data' ? 'warn' : 'secondary';
   }
 }

@@ -2,15 +2,15 @@ import { Component, computed, inject } from '@angular/core';
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { ChartModule } from 'primeng/chart';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { chartTheme, upTokens } from '@loan/design-tokens';
 import { AnalyticsBridgeService } from '../core/bridge.service';
 
 @Component({
   selector: 'mfe2-dashboard-page',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, DecimalPipe, ChartModule, ButtonModule],
+  imports: [CurrencyPipe, DatePipe, DecimalPipe, ChartModule, ButtonModule, CardModule],
   templateUrl: './dashboard-page.component.html',
-  styleUrls: ['./dashboard-page.component.scss'],
 })
 export class DashboardPageComponent {
   protected readonly bridge = inject(AnalyticsBridgeService);

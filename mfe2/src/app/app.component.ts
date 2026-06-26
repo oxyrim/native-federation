@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { TagModule } from 'primeng/tag';
 
 /**
  * Root of the Angular 19 remote. Rendered either:
@@ -9,32 +10,51 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 @Component({
   selector: 'mfe2-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, TagModule],
   template: `
-    <div class="analytics-shell">
-      <div class="analytics-header">
+    <div class="p-4">
+      <div class="flex justify-content-between align-items-start gap-3">
         <div>
-          <h1 class="up-page-title">Reports &amp; Analytics</h1>
-          <p class="up-page-subtitle">
+          <h1 class="text-3xl font-bold m-0">Reports &amp; Analytics</h1>
+          <p class="mt-1 mb-0 text-color-secondary">
             Pipeline insights powered by live, governed data from the Loan Pipeline MFE.
           </p>
         </div>
-        <span class="runtime-badge" title="This area is an independently deployed remote">
-          <i class="pi pi-box"></i> Angular 19 · Web Component
-        </span>
+        <p-tag icon="pi pi-box" value="Angular 19 · Web Component" severity="info" />
       </div>
 
-      <nav class="analytics-tabs">
-        <a routerLink="/analytics" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+      <nav class="flex gap-1 mt-4 mb-4 border-bottom-1 surface-border">
+        <a
+          routerLink="/analytics"
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="text-primary border-primary"
+          class="inline-flex align-items-center gap-2 px-3 py-2 text-sm font-medium no-underline text-color-secondary border-bottom-2 border-transparent cursor-pointer"
+          style="margin-bottom: -1px"
+        >
           <i class="pi pi-chart-pie"></i> Dashboard
         </a>
-        <a routerLink="/analytics/reports" routerLinkActive="active">
+        <a
+          routerLink="/analytics/reports"
+          routerLinkActive="text-primary border-primary"
+          class="inline-flex align-items-center gap-2 px-3 py-2 text-sm font-medium no-underline text-color-secondary border-bottom-2 border-transparent cursor-pointer"
+          style="margin-bottom: -1px"
+        >
           <i class="pi pi-file"></i> Reports
         </a>
-        <a routerLink="/analytics/quality" routerLinkActive="active">
+        <a
+          routerLink="/analytics/quality"
+          routerLinkActive="text-primary border-primary"
+          class="inline-flex align-items-center gap-2 px-3 py-2 text-sm font-medium no-underline text-color-secondary border-bottom-2 border-transparent cursor-pointer"
+          style="margin-bottom: -1px"
+        >
           <i class="pi pi-verified"></i> Data Quality
         </a>
-        <a routerLink="/analytics/activity" routerLinkActive="active">
+        <a
+          routerLink="/analytics/activity"
+          routerLinkActive="text-primary border-primary"
+          class="inline-flex align-items-center gap-2 px-3 py-2 text-sm font-medium no-underline text-color-secondary border-bottom-2 border-transparent cursor-pointer"
+          style="margin-bottom: -1px"
+        >
           <i class="pi pi-history"></i> Activity
         </a>
       </nav>
@@ -42,63 +62,6 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
       <router-outlet />
     </div>
   `,
-  styles: [
-    `
-      :host {
-        display: block;
-      }
-      .analytics-shell {
-        padding: 1.5rem 2rem;
-      }
-      .analytics-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 1rem;
-      }
-      .runtime-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: var(--ds-color-info-bg, #eff6ff);
-        color: var(--ds-color-info-text, #1e40af);
-        border: 1px solid var(--ds-color-info-border, #bfdbfe);
-        font-size: 0.75rem;
-        font-weight: 600;
-        white-space: nowrap;
-      }
-      .analytics-tabs {
-        display: flex;
-        gap: 4px;
-        margin: 1.25rem 0 1.5rem;
-        border-bottom: 1px solid var(--up-border, #e3e5e9);
-
-        a {
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          padding: 10px 16px;
-          color: var(--up-text-secondary, #5d6470);
-          text-decoration: none;
-          font-size: 0.875rem;
-          font-weight: 500;
-          border-bottom: 2px solid transparent;
-          margin-bottom: -1px;
-
-          &:hover {
-            color: var(--up-text-primary, #1b1e24);
-          }
-
-          &.active {
-            color: var(--ds-text-link, #2563eb);
-            border-bottom-color: var(--ds-color-primary-500, #3b82f6);
-          }
-        }
-      }
-    `,
-  ],
 })
 export class AppComponent implements OnInit {
   private readonly router = inject(Router);

@@ -20,6 +20,9 @@ module.exports = withNativeFederation({
     // Theme presets are imported via deep subpaths (@primeng/themes/aura/...)
     // that the import map cannot resolve — bundle them instead of sharing.
     /^@primeng\/themes/,
+    // PrimeFlex is a CSS-only utility lib (loaded via angular.json styles);
+    // it has no JS entry point, so federation must not try to share it.
+    'primeflex',
     'rxjs/ajax',
     'rxjs/fetch',
     'rxjs/testing',

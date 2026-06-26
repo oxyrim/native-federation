@@ -8,6 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { loadRemoteModule } from '@angular-architects/native-federation';
+import { CardModule } from 'primeng/card';
 
 /**
  * Hosts the Angular 19 remote as a WEB COMPONENT.
@@ -17,40 +18,25 @@ import { loadRemoteModule } from '@angular-architects/native-federation';
 @Component({
   selector: 'app-analytics-host',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CardModule],
   template: `
     @if (error()) {
-      <div class="remote-error up-card">
-        <i class="pi pi-exclamation-triangle"></i>
-        <div>
-          <strong>Reports &amp; Analytics is unavailable.</strong>
-          <p>Could not load the remote (is mfe2 running on port 4202?).</p>
-        </div>
+      <div class="p-4">
+        <p-card>
+          <div class="flex align-items-center gap-3 text-red-500">
+            <i class="pi pi-exclamation-triangle text-2xl"></i>
+            <div>
+              <strong>Reports &amp; Analytics is unavailable.</strong>
+              <p class="mt-1 mb-0 text-color-secondary text-sm">Could not load the remote (is mfe2 running on port 4202?).</p>
+            </div>
+          </div>
+        </p-card>
       </div>
     } @else if (!loaded()) {
-      <div class="remote-loading">Loading Reports &amp; Analytics…</div>
+      <div class="p-4 text-color-secondary">Loading Reports &amp; Analytics…</div>
     }
-    <div #host class="remote-host"></div>
+    <div #host style="display: block; height: 100%"></div>
   `,
-  styles: [
-    `
-      .remote-host {
-        display: block;
-        height: 100%;
-      }
-      .remote-loading {
-        padding: var(--up-space-6);
-        color: var(--up-text-muted);
-      }
-      .remote-error {
-        margin: var(--up-space-6);
-        padding: var(--up-space-5);
-        display: flex;
-        gap: var(--up-space-4);
-        align-items: center;
-        color: var(--up-status-error);
-      }
-    `,
-  ],
 })
 export class AnalyticsHost implements OnInit, OnDestroy {
   @ViewChild('host', { static: true }) hostRef!: ElementRef<HTMLDivElement>;

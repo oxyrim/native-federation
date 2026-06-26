@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MeterGroupModule } from 'primeng/metergroup';
+import { CardModule } from 'primeng/card';
 import { AccordionModule } from 'primeng/accordion';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
@@ -37,6 +38,7 @@ interface IssueCategory {
     DecimalPipe,
     FormsModule,
     MeterGroupModule,
+    CardModule,
     AccordionModule,
     ProgressBarModule,
     ButtonModule,
@@ -48,7 +50,6 @@ interface IssueCategory {
   ],
   providers: [MessageService],
   templateUrl: './quality-page.component.html',
-  styleUrls: ['./quality-page.component.scss'],
 })
 export class QualityPageComponent {
   protected readonly bridge = inject(AnalyticsBridgeService);

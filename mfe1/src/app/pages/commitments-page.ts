@@ -7,8 +7,10 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
 import { AppId } from '@loan/bridge';
-import { CommitmentsService, NewCommitmentInput } from '../core/commitments.service';
+import { CommitmentsService, CommitmentStatus, NewCommitmentInput } from '../core/commitments.service';
 import { LoansService, PRODUCTS } from '../core/loans.service';
 import { PipelineBridgeService } from '../core/bridge.service';
 
@@ -32,57 +34,69 @@ const EXPIRY_OPTIONS = [
     InputTextModule,
     InputNumberModule,
     SelectModule,
+    CardModule,
+    TagModule,
   ],
   template: `
-    <div class="page">
-      <div class="header">
+    <div class="p-4 flex flex-column gap-4">
+      <div class="flex justify-content-between align-items-start">
         <div>
-          <h1 class="up-page-title">Commitment Pipeline</h1>
-          <p class="up-page-subtitle">Track open commitments and propose new ones from selected loans.</p>
+          <h1 class="text-3xl font-bold m-0">Commitment Pipeline</h1>
+          <p class="mt-1 mb-0 text-color-secondary">Track open commitments and propose new ones from selected loans.</p>
         </div>
         <p-button label="New Commitment" icon="pi pi-plus" (onClick)="openNewDialog()" />
       </div>
 
-      <div class="cards">
-        <div class="up-card stat">
-          <span class="up-section-label">Open</span>
-          <strong>{{ commitmentsService.openCount() | number }}</strong>
+      <div class="grid">
+        <div class="col-12 md:col-6 lg:col-3">
+          <p-card>
+            <span class="text-xs font-semibold uppercase text-color-secondary">Open</span>
+            <div class="text-2xl font-bold mt-1">{{ commitmentsService.openCount() | number }}</div>
+          </p-card>
         </div>
-        <div class="up-card stat">
-          <span class="up-section-label">Pending</span>
-          <strong>{{ commitmentsService.pendingCount() | number }}</strong>
+        <div class="col-12 md:col-6 lg:col-3">
+          <p-card>
+            <span class="text-xs font-semibold uppercase text-color-secondary">Pending</span>
+            <div class="text-2xl font-bold mt-1">{{ commitmentsService.pendingCount() | number }}</div>
+          </p-card>
         </div>
-        <div class="up-card stat">
-          <span class="up-section-label">Fulfilled</span>
-          <strong>{{ commitmentsService.fulfilledCount() | number }}</strong>
+        <div class="col-12 md:col-6 lg:col-3">
+          <p-card>
+            <span class="text-xs font-semibold uppercase text-color-secondary">Fulfilled</span>
+            <div class="text-2xl font-bold mt-1">{{ commitmentsService.fulfilledCount() | number }}</div>
+          </p-card>
         </div>
-        <div class="up-card stat">
-          <span class="up-section-label">Total Committed UPB</span>
-          <strong>{{ commitmentsService.totalUpb() | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+        <div class="col-12 md:col-6 lg:col-3">
+          <p-card>
+            <span class="text-xs font-semibold uppercase text-color-secondary">Total Committed UPB</span>
+            <div class="text-2xl font-bold mt-1">{{ commitmentsService.totalUpb() | currency: 'USD' : 'symbol' : '1.0-0' }}</div>
+          </p-card>
         </div>
       </div>
 
       @if (loansService.selected().length > 0) {
-        <div class="up-card selection-hint">
-          <i class="pi pi-info-circle"></i>
-          <span>
-            <strong>{{ loansService.selected().length }}</strong> loans
-            ({{ loansService.selectedUpb() | currency: 'USD' : 'symbol' : '1.0-0' }} UPB) are selected in the
-            Loan Pipeline and ready to be committed.
-          </span>
-          <p-button label="Propose from Selection" size="small" [outlined]="true" (onClick)="proposeFromSelection()" />
-        </div>
+        <p-card>
+          <div class="flex align-items-center gap-3">
+            <i class="pi pi-info-circle text-primary"></i>
+            <span class="flex-1 text-sm text-color-secondary">
+              <strong>{{ loansService.selected().length }}</strong> loans
+              ({{ loansService.selectedUpb() | currency: 'USD' : 'symbol' : '1.0-0' }} UPB) are selected in the
+              Loan Pipeline and ready to be committed.
+            </span>
+            <p-button label="Propose from Selection" size="small" [outlined]="true" (onClick)="proposeFromSelection()" />
+          </div>
+        </p-card>
       }
 
-      <div class="up-card up-table">
+      <p-card>
         <p-table [value]="commitmentsService.commitments()" dataKey="id" styleClass="p-datatable-sm">
           <ng-template #header>
             <tr>
               <th>Commitment ID</th>
               <th>Product</th>
-              <th class="num">Loans</th>
-              <th class="num">UPB</th>
-              <th class="num">Commitment Price</th>
+              <th class="text-right">Loans</th>
+              <th class="text-right">UPB</th>
+              <th class="text-right">Commitment Price</th>
               <th>Expires</th>
               <th>Status</th>
               <th></th>
@@ -90,21 +104,14 @@ const EXPIRY_OPTIONS = [
           </ng-template>
           <ng-template #body let-c>
             <tr>
-              <td class="cell-id">{{ c.id }}</td>
+              <td class="font-medium">{{ c.id }}</td>
               <td>{{ c.product }}</td>
-              <td class="num">{{ c.loans | number }}</td>
-              <td class="num">{{ c.upb | currency: 'USD' : 'symbol' : '1.0-0' }}</td>
-              <td class="num">{{ c.price | number: '1.3-3' }}</td>
-              <td class="cell-muted">{{ c.expires }}</td>
+              <td class="text-right">{{ c.loans | number }}</td>
+              <td class="text-right">{{ c.upb | currency: 'USD' : 'symbol' : '1.0-0' }}</td>
+              <td class="text-right">{{ c.price | number: '1.3-3' }}</td>
+              <td class="text-color-secondary">{{ c.expires }}</td>
               <td>
-                <span
-                  class="up-chip"
-                  [class.ready]="c.status === 'Fulfilled'"
-                  [class.warn]="c.status === 'Pending'"
-                  [class.neutral]="c.status === 'Open'"
-                >
-                  {{ c.status }}
-                </span>
+                <p-tag [value]="c.status" [severity]="statusSeverity(c.status)" />
               </td>
               <td>
                 @if (c.status !== 'Fulfilled') {
@@ -120,20 +127,25 @@ const EXPIRY_OPTIONS = [
             </tr>
           </ng-template>
         </p-table>
-      </div>
+      </p-card>
 
       <!-- ================= CROSS-APP MESSAGING DEMO ================= -->
-      <div class="up-card bridge-messenger">
-        <h3><i class="pi pi-send"></i> Pipeline &harr; Platform Messaging</h3>
-        <p class="bm-hint">
+      <p-card>
+        <ng-template #header>
+          <div class="flex align-items-center gap-2 px-3 pt-3 text-lg font-medium">
+            <i class="pi pi-send text-primary"></i> Pipeline &harr; Platform Messaging
+          </div>
+        </ng-template>
+        <p class="mt-0 mb-3 text-color-secondary text-sm line-height-3">
           Same <code>&#64;loan/bridge</code> instance as the shell and Reports &amp; Analytics (MFE2).
           A message sent here reaches the shell (<strong>mfe&nbsp;&rarr;&nbsp;shell</strong>) and
           MFE2's Activity feed (<strong>mfe&nbsp;&rarr;&nbsp;mfe</strong>) instantly; messages from
           either of those land in this feed too.
         </p>
-        <div class="bm-compose">
+        <div class="flex gap-2 mb-3">
           <input
             pInputText
+            class="flex-1"
             type="text"
             placeholder="Message to Shell &amp; Analytics (MFE2)..."
             [(ngModel)]="draft"
@@ -141,18 +153,18 @@ const EXPIRY_OPTIONS = [
           />
           <p-button label="Send" icon="pi pi-send" size="small" [disabled]="!draft().trim()" (onClick)="send()" />
         </div>
-        <ul class="bm-feed">
+        <ul class="list-none m-0 p-0 flex flex-column gap-2 overflow-y-auto" style="max-height: 220px">
           @for (m of bridge.messages(); track m.id) {
-            <li [class]="m.level">
-              <span class="bm-from">{{ appLabel(m.from) }}</span>
-              <span class="bm-text">{{ m.message }}</span>
-              <span class="bm-when">{{ m.asOf | date: 'HH:mm:ss' }}</span>
+            <li class="flex align-items-center gap-2 p-2 surface-100 border-round text-sm">
+              <p-tag [value]="appLabel(m.from)" [severity]="levelSeverity(m.level)" />
+              <span class="flex-1 text-color-secondary">{{ m.message }}</span>
+              <span class="text-color-secondary text-xs white-space-nowrap">{{ m.asOf | date: 'HH:mm:ss' }}</span>
             </li>
           } @empty {
-            <li class="bm-empty">No messages yet — send one, or trigger one from the Shell/MFE2.</li>
+            <li class="text-color-secondary text-sm p-2">No messages yet — send one, or trigger one from the Shell/MFE2.</li>
           }
         </ul>
-      </div>
+      </p-card>
     </div>
 
     <!-- ================= NEW COMMITMENT DIALOG ================= -->
@@ -163,25 +175,25 @@ const EXPIRY_OPTIONS = [
       [modal]="true"
       [style]="{ width: '28rem' }"
     >
-      <div class="form">
-        <label>
-          <span class="up-section-label">Product</span>
+      <div class="flex flex-column gap-3">
+        <label class="flex flex-column gap-2">
+          <span class="text-xs font-semibold uppercase text-color-secondary">Product</span>
           <p-select [options]="productOptions" [(ngModel)]="form.product" [style]="{ width: '100%' }" />
         </label>
-        <label>
-          <span class="up-section-label">Loan count</span>
+        <label class="flex flex-column gap-2">
+          <span class="text-xs font-semibold uppercase text-color-secondary">Loan count</span>
           <p-inputnumber [(ngModel)]="form.loans" [min]="1" [max]="500" [style]="{ width: '100%' }" />
         </label>
-        <label>
-          <span class="up-section-label">Total UPB</span>
+        <label class="flex flex-column gap-2">
+          <span class="text-xs font-semibold uppercase text-color-secondary">Total UPB</span>
           <p-inputnumber [(ngModel)]="form.upb" mode="currency" currency="USD" [min]="0" [style]="{ width: '100%' }" />
         </label>
-        <label>
-          <span class="up-section-label">Commitment price</span>
+        <label class="flex flex-column gap-2">
+          <span class="text-xs font-semibold uppercase text-color-secondary">Commitment price</span>
           <p-inputnumber [(ngModel)]="form.price" [minFractionDigits]="3" [maxFractionDigits]="3" [min]="90" [max]="110" [style]="{ width: '100%' }" />
         </label>
-        <label>
-          <span class="up-section-label">Expires in</span>
+        <label class="flex flex-column gap-2">
+          <span class="text-xs font-semibold uppercase text-color-secondary">Expires in</span>
           <p-select [options]="expiryOptions" optionLabel="label" optionValue="value" [(ngModel)]="form.expiresInDays" [style]="{ width: '100%' }" />
         </label>
       </div>
@@ -191,63 +203,6 @@ const EXPIRY_OPTIONS = [
       </ng-template>
     </p-dialog>
   `,
-  styles: [
-    `
-      .page {
-        padding: var(--up-space-5) var(--up-space-6);
-        display: flex;
-        flex-direction: column;
-        gap: var(--up-space-4);
-      }
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-      }
-      .cards {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: var(--up-space-4);
-      }
-      .stat {
-        padding: var(--up-space-4) var(--up-space-5);
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-
-        strong {
-          font-size: 1.5rem;
-        }
-      }
-      .selection-hint {
-        display: flex;
-        align-items: center;
-        gap: var(--up-space-3);
-        padding: var(--up-space-3) var(--up-space-4);
-        border-left: 3px solid var(--up-primary-500);
-
-        i {
-          color: var(--up-primary-600);
-        }
-        span {
-          flex: 1;
-          font-size: var(--up-font-size-sm);
-          color: var(--up-text-secondary);
-        }
-      }
-      .form {
-        display: flex;
-        flex-direction: column;
-        gap: var(--up-space-4);
-
-        label {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-      }
-    `,
-  ],
 })
 export class CommitmentsPage {
   protected readonly loansService = inject(LoansService);
@@ -267,6 +222,14 @@ export class CommitmentsPage {
     price: 100.5,
     expiresInDays: 14,
   };
+
+  protected statusSeverity(status: CommitmentStatus): 'success' | 'warn' | 'secondary' {
+    return status === 'Fulfilled' ? 'success' : status === 'Pending' ? 'warn' : 'secondary';
+  }
+
+  protected levelSeverity(level: 'info' | 'success' | 'warning'): 'info' | 'success' | 'warn' {
+    return level === 'warning' ? 'warn' : level;
+  }
 
   protected openNewDialog(): void {
     this.form = { product: PRODUCTS[0], loans: 10, upb: 3_000_000, price: 100.5, expiresInDays: 14 };

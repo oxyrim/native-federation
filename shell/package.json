@@ -26,6 +26,7 @@
     "@softarc/native-federation-node": "^3.3.4",
     "chart.js": "^4.5.1",
     "es-module-shims": "^1.5.12",
+    "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.9",
     "rxjs": "~7.8.0",
