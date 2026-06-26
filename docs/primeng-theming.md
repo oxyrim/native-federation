@@ -6,7 +6,10 @@ majors in one browser tab** — PrimeNG 21 (shell + mfe1, Angular 21) and PrimeN
 19 (mfe2, Angular 19, shipped as a `<mfe2-analytics>` web component).
 
 This is the narrative companion to the terse catalog in
-[known-issues.md](known-issues.md) (entries #1, #11–#17).
+[known-issues.md](known-issues.md) (entries #1, #11–#17). For how these same
+pitfalls compare to a **webpack Module Federation** setup — which ones vanish,
+which stay identical, and why — see
+[webpack-vs-native-federation.md](webpack-vs-native-federation.md).
 
 ---
 

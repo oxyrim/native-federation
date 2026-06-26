@@ -26,6 +26,7 @@ Plus two framework-agnostic packages:
 | [docs/bridge.md](docs/bridge.md) | bridge API, why an Angular singleton can't work, adapters, versioning, adding channels |
 | [docs/governance.md](docs/governance.md) | policy model, current rules, audit, violation handling |
 | [docs/primeng-theming.md](docs/primeng-theming.md) | how PrimeNG styled-mode theming works, the federation + web-component pitfalls (two PrimeNG majors in one tab), and the fixes |
+| [docs/webpack-vs-native-federation.md](docs/webpack-vs-native-federation.md) | the same shell+MFE+2×PrimeNG setup on webpack Module Federation vs Native Federation — which integration pitfalls (zone.js, remoteEntry, shared NgZone, theme collisions) vanish, persist, or move, and why |
 | [docs/known-issues.md](docs/known-issues.md) | **18 pitfalls of Native Federation × Web Components × PrimeNG** — each with symptom, cause, fix |
 
 ## Running
