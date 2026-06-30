@@ -12,17 +12,24 @@ webpack; each app builds with the regular Angular esbuild builder, wrapped by
 At runtime:
 
 1. The shell boots via [`src/main.ts`](../shell/src/main.ts):
-   `initFederation('federation.manifest.json')` fetches every remote's
-   `remoteEntry.json`, merges the **shared package metadata** into one import
-   map, then imports `bootstrap.ts` (the real Angular entry).
-2. `loadRemoteModule('<remote>', './<exposed>')` resolves an exposed module
-   through that import map and imports it like any ES module.
+   `initFederation()` is called **host-only** (no manifest, no pre-registered
+   remotes) — it processes just the host's own shared-package metadata into the
+   import map, then imports `bootstrap.ts` (the real Angular entry).
+2. Remotes are discovered **at runtime from an API config**, not a static
+   manifest. `loadRemoteModule({ remoteEntry, remoteName, exposedModule })`
+   fetches that remote's `remoteEntry.json` on demand, merges its shared-dep
+   metadata into the import map, and imports the exposed module like any ES
+   module. See [dynamic-routing.md](dynamic-routing.md) for the full design.
 
 ```
-shell (host)                         mfe1 / mfe2 (remotes)
-federation.manifest.json   ──────▶   remoteEntry.json
-  { "mfe1": "http://localhost:4201/remoteEntry.json",     ├─ exposes: './routes' | './web-component'
-    "mfe2": "http://localhost:4203/remoteEntry.json" }    └─ shared: [{ packageName, version, singleton… }]
+shell (host)                              mfe1 / mfe2 (remotes)
+initFederation()  (host only)
+GET mfe-config.json  ──────────────────▶  remoteEntry.json   (fetched lazily,
+  [{ routePath, businessContext[],          ├─ exposes: './routes' | './web-component'
+     mfeConfig:{ remoteEntry,               └─ shared: [{ packageName, version, singleton… }]
+       exposeModule, moduleName }}]
+   → buildRoutes() → router.resetConfig()
+   → buildNav()    → left navigation
 ```
 
 ## The two integration styles used here
@@ -64,19 +71,29 @@ module.exports = withNativeFederation({
 
 ## Adding a new remote
 
+**No shell code changes.** Routing and navigation are generated at runtime from
+the API config ([dynamic-routing.md](dynamic-routing.md)), so onboarding a remote
+is a config edit:
+
 1. `ng new <app>` (any Angular major), `ng add @angular-architects/native-federation --type remote --port 42xx`.
 2. Choose the integration style (routes vs web component) per the table above.
-3. Add the remote to [`shell/public/federation.manifest.json`](../shell/public/federation.manifest.json).
-4. Add a route in [`shell/src/app/app.routes.ts`](../shell/src/app/app.routes.ts)
-   (`loadChildren` + `loadRemoteModule`, or the `startsWith()` matcher + host
-   component for a web component).
-5. Register the new `AppId` in the bridge contracts and give it explicit
+3. Add an entry to the platform config (`shell/public/mfe-config.json`, standing
+   in for the API): `routePath`, `businessContext[]`, and `mfeConfig`
+   (`remoteEntry`, `exposeModule`, `moduleName`). Set `elementId` for a web
+   component; add `children[]` to surface a route-table remote's internal routes
+   in the left nav.
+4. Register the new `AppId` in the bridge contracts and give it explicit
    governance permissions ([governance.md](governance.md)).
+
+The shell has **no** `app.routes.ts` and **no** `federation.manifest.json` — both
+were removed in favor of the config-driven route factory.
 
 ## Production notes
 
-- The manifest is fetched at runtime → swap per environment by deploying a
-  different `federation.manifest.json` (no rebuild of the shell).
+- The platform config is fetched at runtime → swap per environment by serving a
+  different `mfe-config.json` / API response (no rebuild of the shell). Remote
+  URLs (`mfeConfig.remoteEntry`) live in that response, so promoting dev → prod
+  is a config change.
 - Remotes must send CORS headers for the shell's origin (`remoteEntry.json`
   and all chunks).
 - `remoteEntry.json` must not be cached aggressively (it carries hashed file

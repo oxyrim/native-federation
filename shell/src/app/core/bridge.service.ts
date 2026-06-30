@@ -34,17 +34,6 @@ export class ShellBridgeService {
     // chart-rendering MFEs (which cannot read CSS vars from chart.js) follow.
     this.publishTheme(initTheme());
 
-    // The shell owns the session: publish the authenticated user once.
-    const user: UserContextChanged = {
-      userId: 'u-1001',
-      displayName: 'Jane Smith',
-      initials: 'JS',
-      role: 'trader',
-      organization: 'Unified Platform',
-    };
-    this.client.publish('session/user', user);
-    this.user.set(user);
-
     this.client.subscribe('pipeline/selection', (sel) => this.selection.set(sel));
     this.client.subscribe('pipeline/summary', (sum) => this.summary.set(sum));
 
@@ -58,6 +47,17 @@ export class ShellBridgeService {
     this.client.subscribe('notifications/broadcast', (msg) => {
       this.messages.update((list) => [msg, ...list].slice(0, 8));
     });
+  }
+
+  /**
+   * Publish the authenticated user on the retained `session/user` channel and
+   * expose it locally. Called once at startup with the user from the user API
+   * (see PlatformBootstrapService) — MFEs that load later still receive it
+   * because the channel is retained.
+   */
+  setUser(user: UserContextChanged): void {
+    this.client.publish('session/user', user);
+    this.user.set(user);
   }
 
   refreshPricing(loanIds: readonly string[]): void {

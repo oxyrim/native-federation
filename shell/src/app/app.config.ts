@@ -1,16 +1,31 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import {
+  ApplicationConfig,
+  inject,
+  provideAppInitializer,
+  provideBrowserGlobalErrorListeners,
+} from '@angular/core';
+import {
+  provideRouter,
+  withComponentInputBinding,
+  withDisabledInitialNavigation,
+} from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 import { providePrimeNG } from 'primeng/config';
 
 import { UP_DARK_MODE_SELECTOR } from '@loan/design-tokens';
 
-import { routes } from './app.routes';
 import { UpPreset } from './theme/up-preset';
+import { PlatformBootstrapService } from './core/platform-bootstrap.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes, withComponentInputBinding()),
+    provideHttpClient(),
+
+    // Start with NO routes and defer the first navigation: the real route table
+    // is built at runtime from the API config in the app initializer below.
+    provideRouter([], withComponentInputBinding(), withDisabledInitialNavigation()),
+
     providePrimeNG({
       ripple: true,
       theme: {
@@ -23,5 +38,9 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
+
+    // Bootstrap: load the user, then the user's config, then build routes and
+    // run the first navigation. See PlatformBootstrapService.
+    provideAppInitializer(() => inject(PlatformBootstrapService).start()),
   ],
 };

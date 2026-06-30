@@ -1,0 +1,55 @@
+[
+  {
+    "elementId": "",
+    "appName": "mfe1",
+    "displayName": "Loan Pipeline",
+    "businessContext": ["Pipeline"],
+    "routePath": "pipeline",
+    "icon": "pi pi-table",
+    "mfeConfig": {
+      "remoteEntry": "http://localhost:4201/remoteEntry.json",
+      "exposeModule": "./routes",
+      "moduleName": "PIPELINE_ROUTES"
+    },
+    "children": [
+      { "displayName": "Loan Pipeline", "routePath": "", "icon": "pi pi-table" },
+      { "displayName": "Commitment Pipeline", "routePath": "commitments", "icon": "pi pi-plus-circle" },
+      { "displayName": "Pricing Results", "routePath": "pricing", "icon": "pi pi-dollar" }
+    ]
+  },
+  {
+    "elementId": "mfe2-analytics",
+    "appName": "mfe2",
+    "displayName": "Reports & Analytics",
+    "businessContext": ["Reports"],
+    "routePath": "analytics",
+    "icon": "pi pi-chart-bar",
+    "mfeConfig": {
+      "remoteEntry": "http://localhost:4203/remoteEntry.json",
+      "exposeModule": "./web-component",
+      "moduleName": "registered"
+    }
+  },
+  {
+    "elementId": "",
+    "appName": "shell",
+    "displayName": "Users",
+    "businessContext": ["Admin"],
+    "routePath": "admin/users",
+    "icon": "pi pi-users",
+    "roles": ["admin"],
+    "mfeConfig": null,
+    "localComponent": "users"
+  },
+  {
+    "elementId": "",
+    "appName": "shell",
+    "displayName": "Settings",
+    "businessContext": ["Admin"],
+    "routePath": "admin/settings",
+    "icon": "pi pi-cog",
+    "roles": ["admin"],
+    "mfeConfig": null,
+    "localComponent": "settings"
+  }
+]

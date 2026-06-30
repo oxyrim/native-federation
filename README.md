@@ -22,6 +22,7 @@ Plus two framework-agnostic packages:
 | Doc | Contents |
 | --- | -------- |
 | [docs/native-federation.md](docs/native-federation.md) | how runtime composition works, config anatomy, adding remotes, production notes |
+| [docs/dynamic-routing.md](docs/dynamic-routing.md) | config-driven routing & nav — the shell builds all routes/menu at runtime from the API response; no hardcoded routes or manifest |
 | [docs/web-component.md](docs/web-component.md) | the Angular 19 element: bootstrap chain, dual-router strategy, light-DOM styling, lifecycle |
 | [docs/bridge.md](docs/bridge.md) | bridge API, why an Angular singleton can't work, adapters, versioning, adding channels |
 | [docs/governance.md](docs/governance.md) | policy model, current rules, audit, violation handling |
@@ -52,23 +53,26 @@ Each MFE also runs standalone: http://localhost:4201 and http://localhost:4203.
 ```
 ┌────────────────────────────  browser tab  ───────────────────────────┐
 │  shell (Angular 21, zoneless, host)                                  │
-│  ├─ /pipeline/**  → loadRemoteModule('mfe1','./routes')              │
-│  │                  ordinary lazy routes — Angular 21 is SHARED      │
-│  ├─ /analytics/** → loadRemoteModule('mfe2','./web-component')       │
-│  │                  <mfe2-analytics> custom element — Angular 19     │
-│  │                  bundled privately, NOTHING framework-level shared│
-│  └─ /admin/**     → shell-local pages                                │
+│  GET mfe-config.json → buildRoutes() + buildNav() at runtime         │
+│  ├─ route-table remote   → loadRemoteModule({remoteEntry,'./routes'})│
+│  │                          ordinary lazy routes — Angular 21 SHARED │
+│  ├─ web-component remote  → generic host mounts <elementId>          │
+│  │                          custom element — Angular 19, isolated    │
+│  └─ shell-local pages     → LOCAL_COMPONENTS registry                │
 │                                                                      │
 │  globalThis[Symbol.for('loan.unified-platform.bridge')]              │
 │  └─ ONE LoanBridge instance — used by all three apps                 │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
+The shell has **no hardcoded routes and no federation manifest** — see
+[docs/dynamic-routing.md](docs/dynamic-routing.md).
+
 ### Internal routing
 
-- **MFE1** exposes its route table; the shell mounts it under `/pipeline`.
-  Deep links (`/pipeline/loans/SL-78912345`) work because the route tree is
-  composed at runtime.
+- **MFE1** exposes its route table; the shell mounts it at the `routePath` from
+  the config (`pipeline`). Deep links (`/pipeline/loans/SL-78912345`) work
+  because the route tree is composed at runtime.
 - **MFE2** runs **its own Angular 19 Router** inside the web component. The
   shell matches `/analytics/**` with a custom `UrlMatcher` that consumes all
   segments; MFE2's router interprets the full URL itself. On every
