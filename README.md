@@ -23,6 +23,7 @@ Plus two framework-agnostic packages:
 | --- | -------- |
 | [docs/native-federation.md](docs/native-federation.md) | how runtime composition works, config anatomy, adding remotes, production notes |
 | [docs/dynamic-routing.md](docs/dynamic-routing.md) | config-driven routing & nav — the shell builds all routes/menu at runtime from the API response; no hardcoded routes or manifest |
+| [docs/adding-an-mfe.md](docs/adding-an-mfe.md) | how to onboard an MFE (config-only) or add a new integration kind (strategy); field reference, checklist, scalability/robustness notes |
 | [docs/web-component.md](docs/web-component.md) | the Angular 19 element: bootstrap chain, dual-router strategy, light-DOM styling, lifecycle |
 | [docs/bridge.md](docs/bridge.md) | bridge API, why an Angular singleton can't work, adapters, versioning, adding channels |
 | [docs/governance.md](docs/governance.md) | policy model, current rules, audit, violation handling |

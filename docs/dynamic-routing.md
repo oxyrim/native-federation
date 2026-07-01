@@ -82,9 +82,15 @@ Key pieces:
 - [`core/api/mfe-config-api.service.ts`](../shell/src/app/core/api/mfe-config-api.service.ts) — `GET mfe-config.json` with the user as query params.
 - [`core/platform-bootstrap.service.ts`](../shell/src/app/core/platform-bootstrap.service.ts) — orchestrates the user → config → routes sequence.
 - [`core/mfe-config.ts`](../shell/src/app/core/mfe-config.ts) — types,
-  `validateConfigs()`, `isEntitled()`, `LOCAL_COMPONENTS`.
+  `validateConfigs()` (normalises paths, drops route-collisions), `isEntitled()`,
+  `resolveMfeKind()`, `LOCAL_COMPONENTS`.
+- [`core/integration.ts`](../shell/src/app/core/integration.ts) — one
+  `MfeIntegrationStrategy` per kind (`routes` / `web-component` / `local`) +
+  registry. **Add a new kind here** (see [adding-an-mfe.md](adding-an-mfe.md)).
+- [`core/remote-loader.ts`](../shell/src/app/core/remote-loader.ts) —
+  `loadExposedModule()` with a 15s timeout; isolates a slow/dead remote.
 - [`core/route-factory.ts`](../shell/src/app/core/route-factory.ts) —
-  `buildRoutes()` maps each config to a `Route`.
+  `buildRoutes()` delegates each config to its strategy, adds redirects.
 - [`core/nav.ts`](../shell/src/app/core/nav.ts) — `buildNav()` groups configs by
   `businessContext`.
 - [`core/mfe-registry.service.ts`](../shell/src/app/core/mfe-registry.service.ts)

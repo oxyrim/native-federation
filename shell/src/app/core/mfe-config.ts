@@ -1,4 +1,4 @@
-import { Type } from '@angular/core';
+import type { Type } from '@angular/core';
 
 /**
  * Shape of one entry in the platform configuration returned by the API
@@ -13,7 +13,7 @@ export interface MfeRouteConfig {
    * Custom-element tag for a **web-component** remote (e.g. `"mfe2-analytics"`).
    * Empty string ⇒ the remote exposes an Angular `Routes` table instead (it is
    * loaded as ordinary lazy child routes). This is the discriminator between
-   * the two integration styles.
+   * the two remote integration styles — see {@link resolveMfeKind}.
    */
   readonly elementId: string;
 
@@ -40,6 +40,14 @@ export interface MfeRouteConfig {
   readonly roles?: readonly string[];
 
   /**
+   * PROPOSED ADDITION: sort weight for the nav (lower = earlier). Controls both
+   * group order (a group sorts by its smallest item order) and item order
+   * within a group. Absent ⇒ falls back to config order (stable). Lets the
+   * platform stay deterministic as the number of MFEs grows.
+   */
+  readonly order?: number;
+
+  /**
    * PROPOSED ADDITION (not in the original API contract): optional PrimeIcons
    * class for the nav item. Purely cosmetic; falls back to a generic icon.
    */
@@ -50,11 +58,7 @@ export interface MfeRouteConfig {
    * — see {@link localComponent}. This keeps locally-owned pages (Users,
    * Settings) flowing through the same config-driven routing/nav pipeline.
    */
-  readonly mfeConfig: {
-    readonly remoteEntry: string;
-    readonly exposeModule: string;
-    readonly moduleName: string;
-  } | null;
+  readonly mfeConfig: MfeFederationConfig | null;
 
   /**
    * PROPOSED ADDITION: when {@link mfeConfig} is `null`, the key of a
@@ -74,10 +78,32 @@ export interface MfeRouteConfig {
   readonly children?: readonly MfeNavChild[];
 }
 
+export interface MfeFederationConfig {
+  /** URL of the remote's `remoteEntry.json`. */
+  readonly remoteEntry: string;
+  /** Exposed key, e.g. `"./routes"` or `"./web-component"`. */
+  readonly exposeModule: string;
+  /** Export to read from the exposed module (a `Routes` array, or a registration promise). */
+  readonly moduleName: string;
+}
+
 export interface MfeNavChild {
   readonly displayName: string;
   readonly routePath: string;
   readonly icon?: string;
+}
+
+/**
+ * How an entry is integrated into the shell. Each kind maps to one integration
+ * strategy (see `integration.ts`). Adding a new kind = add a strategy; the rest
+ * of the pipeline (validation, nav, registry) is kind-agnostic.
+ */
+export type MfeKind = 'routes' | 'web-component' | 'local';
+
+/** Derive the integration kind from a (validated) config entry. */
+export function resolveMfeKind(cfg: MfeRouteConfig): MfeKind {
+  if (cfg.mfeConfig === null) return 'local';
+  return cfg.elementId ? 'web-component' : 'routes';
 }
 
 /**
@@ -96,21 +122,47 @@ export function isEntitled(cfg: MfeRouteConfig, role: string): boolean {
   return !Array.isArray(cfg.roles) || cfg.roles.length === 0 || cfg.roles.includes(role);
 }
 
-/** Narrow + drop invalid entries so one bad config can't break the whole shell. */
+/** Normalise a route path: trim whitespace and strip leading/trailing slashes. */
+export function normalizeRoutePath(path: string): string {
+  return path.trim().replace(/^\/+/, '').replace(/\/+$/, '');
+}
+
+/**
+ * Narrow, normalise, and de-duplicate the raw API payload so one bad entry — or
+ * a route collision between two MFEs — can never break the whole shell.
+ * Invalid/colliding entries are dropped with a diagnostic; the rest load.
+ */
 export function validateConfigs(raw: unknown): MfeRouteConfig[] {
   if (!Array.isArray(raw)) {
     console.error('[shell] platform config is not an array — got', raw);
     return [];
   }
+
   const valid: MfeRouteConfig[] = [];
+  const seenPaths = new Set<string>();
+
   raw.forEach((entry, i) => {
     const problem = configProblem(entry);
     if (problem) {
       console.error(`[shell] dropping invalid MFE config at index ${i}: ${problem}`, entry);
       return;
     }
-    valid.push(entry as MfeRouteConfig);
+
+    const cfg = entry as MfeRouteConfig;
+    const routePath = normalizeRoutePath(cfg.routePath);
+
+    if (seenPaths.has(routePath)) {
+      console.error(
+        `[shell] dropping MFE "${cfg.appName}" at index ${i}: duplicate routePath "${routePath}"`,
+      );
+      return;
+    }
+    seenPaths.add(routePath);
+
+    // Hand downstream a normalised copy so routing + nav agree on the path.
+    valid.push(routePath === cfg.routePath ? cfg : { ...cfg, routePath });
   });
+
   return valid;
 }
 
